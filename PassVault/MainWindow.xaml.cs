@@ -53,5 +53,10 @@ namespace PassVault
             // Delete the key from the container.
             KeyOutput.Text = StoreKey.DeleteKeyFromContainer("MyKeyContainer");
         }
+
+        private void Button_Click_4(object sender, RoutedEventArgs e)
+        {
+            KeyOutput.Text = StoreKey.getPublicKeyFromContainer("MyKeyContainer");
+        }
     }
 }

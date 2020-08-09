@@ -15,6 +15,7 @@
         <Button Content="Get Key" HorizontalAlignment="Left" Margin="240,141,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.368,-0.754" Click="Button_Click_2"/>
         <Button Content="Delete Key" HorizontalAlignment="Left" Margin="422,141,0,0" VerticalAlignment="Top" Click="Button_Click_3"/>
         <TextBox x:Name="KeyOutput" HorizontalAlignment="Left" Margin="97,205,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="616" Height="187" HorizontalScrollBarVisibility="Visible"/>
+        <Button Content="Get the Public Key" HorizontalAlignment="Left" Margin="597,141,0,0" VerticalAlignment="Top" Click="Button_Click_4"/>
 
     </Grid>
 </Window>
