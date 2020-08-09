@@ -33,8 +33,25 @@ namespace PassVault
         {
             byte[] randomNumber = new byte[8];
             rngCsp.GetBytes(randomNumber);
-            RandomNumber.Text = BitConverter.ToDouble(randomNumber, 0).ToString();
+            RandomNumber.Text = BitConverter.ToDouble(randomNumber, 0).ToString();  
         }
 
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            // Create a key and save it in a container.
+            KeyOutput.Text = StoreKey.GenKey_SaveInContainer("MyKeyContainer");
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            // Retrieve the key from the container.
+            KeyOutput.Text = StoreKey.GetKeyFromContainer("MyKeyContainer");
+        }
+
+        private void Button_Click_3(object sender, RoutedEventArgs e)
+        {
+            // Delete the key from the container.
+            KeyOutput.Text = StoreKey.DeleteKeyFromContainer("MyKeyContainer");
+        }
     }
 }
