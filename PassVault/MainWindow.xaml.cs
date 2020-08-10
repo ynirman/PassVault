@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
+using System.Diagnostics;
 
 
 
@@ -57,6 +58,11 @@ namespace PassVault
         private void Button_Click_4(object sender, RoutedEventArgs e)
         {
             KeyOutput.Text = StoreKey.getPublicKeyFromContainer("MyKeyContainer");
+        }
+
+        private void ButtonClickLogin(object sender, RoutedEventArgs e)
+        {
+            UserLogin.Login();
         }
     }
 }
