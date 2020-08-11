@@ -13,8 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
-using System.Diagnostics;
-
 
 
 namespace PassVault
@@ -62,7 +60,10 @@ namespace PassVault
 
         private void ButtonClickLogin(object sender, RoutedEventArgs e)
         {
-            UserLogin.Login();
+            //UserLogin.Login();
+
+            AES.StartAES("ABCD1234", Utils.AES_Type.Encrypt);
+            //AES.StartAES("æOhî!*#ïÕU»", Utils.AES_Type.Decrypt);
         }
     }
 }
