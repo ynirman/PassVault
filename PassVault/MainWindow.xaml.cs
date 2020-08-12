@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
-
+using System.Diagnostics;
 
 namespace PassVault
 {
@@ -62,8 +62,11 @@ namespace PassVault
         {
             //UserLogin.Login();
 
-            AES.StartAES("ABCD1234", Utils.AES_Type.Encrypt);
-            //AES.StartAES("æOhî!*#ïÕU»", Utils.AES_Type.Decrypt);
+            string plaintext = "This is fantastic message will be encrypted and decrypted using the same Algorithm.";
+            byte[] encrypted = AES.StartAES(Encoding.ASCII.GetBytes(plaintext), Utils.AES_Type.Encrypt);
+            byte[] decrypted = AES.StartAES(encrypted, Utils.AES_Type.Decrypt);
+
+            Debug.WriteLine("decrypted: " + Encoding.ASCII.GetString(decrypted));
         }
     }
 }
