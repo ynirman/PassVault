@@ -15,23 +15,23 @@ namespace PassVault
 {
     public static class AES
     {
+        public enum AES_Type { Encrypt, Decrypt };
         const int KEY_SIZE_IN_BYTES = 16;
         const int BLOCK_SIZE_IN_BYTES = 16;
         const int NUM_MAIN_ROUNDS = 9;
         private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
-        static Utils.AES_Type cipherType; // Encrypt or Decrypt
+        static AES_Type cipherType; // Encrypt or Decrypt
 
-        public static byte[] StartAES(byte[] plaintext, Utils.AES_Type type)
+        public static byte[] StartAES(byte[] plaintext, AES.AES_Type type)
         {
             cipherType = type;
             // TODO get vaultKey 128bits instead of hardcoded
             byte[] vaultKey = new byte[KEY_SIZE_IN_BYTES];
             rngCsp.GetBytes(vaultKey);
-            vaultKey = Encoding.ASCII.GetBytes("abcdefghijklmnop");
+            vaultKey = Encoding.ASCII.GetBytes("abcdefghidsjklmnop");
 
             // At the first iteration, keyMatrix is our vaultKey
             byte[,] keyMatrix = ByteBlockToMatrix(vaultKey);
-            //byte[] plaintextInBytes = PlaintextToBytes(plaintext);
             Utils.PadToBlockSize(ref plaintext, 16);
             int numberOfBlocks = plaintext.Length / BLOCK_SIZE_IN_BYTES;
             byte[] cypheredText = new byte[16 * numberOfBlocks];
@@ -44,7 +44,7 @@ namespace PassVault
                 Buffer.BlockCopy(plaintext, i * 16, currentBlock, 0, 16);
                 byte[,] stateMatrix = ByteBlockToMatrix(currentBlock);
 
-                if (cipherType == Utils.AES_Type.Encrypt)
+                if (cipherType == AES.AES_Type.Encrypt)
                     Encryption(stateMatrix, keyMatrix);
                 else
                     Decryption(stateMatrix, keyMatrix);
@@ -58,9 +58,9 @@ namespace PassVault
 
         public static void Encryption(byte[,] stateMatrix, byte[,] keyMatrix)
         {
-            byte[] derivedRoundKeys = Utils.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
+            byte[] derivedRoundKeys = MyHKDF.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
             // Initial round
-            AddRoundKey(stateMatrix, keyMatrix); // with original key
+            AddRoundKey(stateMatrix, keyMatrix);
             // 9 main rounds (depends on key length) of substitution and permutation
             for (int i = 1; i <= NUM_MAIN_ROUNDS;  i++)
             {
@@ -78,7 +78,7 @@ namespace PassVault
 
         public static void Decryption(byte[,] stateMatrix, byte[,] keyMatrix)
         {
-            byte[] derivedRoundKeys = Utils.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
+            byte[] derivedRoundKeys = MyHKDF.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
             // Initial round
             AddRoundKey(stateMatrix, GetCurrentRoundKey(derivedRoundKeys, 10));
             ShiftRows(stateMatrix);
@@ -96,14 +96,6 @@ namespace PassVault
             AddRoundKey(stateMatrix, keyMatrix);
         }
 
-        public static byte[,] GetCurrentRoundKey(byte[] derivedKeys, int currentRound)
-        {
-            byte[] currentRoundKey = new byte[16];
-            Buffer.BlockCopy(derivedKeys, (currentRound - 1) * 16, currentRoundKey, 0, 16);
-
-            return ByteBlockToMatrix(currentRoundKey);
-        }
-
         // XORing state with current key
         public static void AddRoundKey(byte[,] stateMatrix, byte[,] keyMatrix)
         {
@@ -114,6 +106,13 @@ namespace PassVault
                     stateMatrix[i, j] = (byte)(stateMatrix[i, j] ^ keyMatrix[i, j]);
                 }
             }
+        }
+        public static byte[,] GetCurrentRoundKey(byte[] derivedKeys, int currentRound)
+        {
+            byte[] currentRoundKey = new byte[16];
+            Buffer.BlockCopy(derivedKeys, (currentRound - 1) * 16, currentRoundKey, 0, 16);
+
+            return ByteBlockToMatrix(currentRoundKey);
         }
 
         // Substitute stateMatrix bytes based on sbox
@@ -130,7 +129,7 @@ namespace PassVault
                     int rowFromByte = Convert.ToInt32(paddedByteAsString.Substring(0, 4), 2);
                     int colFromByte = Convert.ToInt32(paddedByteAsString.Substring(4, 4), 2);
                     // Lookup in a pre defined substitution box
-                    if (cipherType == Utils.AES_Type.Encrypt)
+                    if (cipherType == AES.AES_Type.Encrypt)
                         stateMatrix[i, j] = Utils.sbox[rowFromByte, colFromByte];
                     else
                         stateMatrix[i, j] = Utils.sboxInverse[rowFromByte, colFromByte];
@@ -146,12 +145,13 @@ namespace PassVault
             {
                 byte[] temp = new byte[4];
                 // Set up shifted rows inside temp
-                if (cipherType == Utils.AES_Type.Encrypt)
+                if (cipherType == AES.AES_Type.Encrypt)
                 {
                     for (int j = 0; j < length; j++)
                     {
                         if (j - i >= 0)
                             temp[j - i] = stateMatrix[i, j];
+                        // overflows
                         else
                             temp[length - i + j] = stateMatrix[i, j];
                     }
@@ -162,6 +162,7 @@ namespace PassVault
                     {
                         if (j + i < length)
                             temp[j + i] = stateMatrix[i, j];
+                        // overflows
                         else
                             temp[(i + j) % length] = stateMatrix[i, j];
 
@@ -180,7 +181,7 @@ namespace PassVault
         {
             byte[,] temp = new byte[4, 4];
             // ForEach Column
-            if (cipherType == Utils.AES_Type.Encrypt)
+            if (cipherType == AES.AES_Type.Encrypt)
                 for (int i = 0; i < stateMatrix.GetLength(1); i++)
                 {
                     temp[0, i] = (byte)((BytesMultiplication(0x02, stateMatrix[0, i]) ^ BytesMultiplication(0x03, stateMatrix[1, i]) ^ stateMatrix[2, i] ^ stateMatrix[3, i]));

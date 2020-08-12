@@ -35,7 +35,7 @@ namespace PassVault
                 }
             }
 
-            byte[] expandedSecretKey = Utils.KeyExpansion(32, Encoding.ASCII.GetBytes(secretKey.ToString()), username);
+            byte[] expandedSecretKey = MyHKDF.KeyExpansion(32, Encoding.ASCII.GetBytes(secretKey.ToString()), username);
 
             return expandedSecretKey.ToString();
         }
