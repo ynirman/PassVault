@@ -34,6 +34,15 @@ namespace PassVault
                 return hkdf.GetBytes(expandToLength);
             }
         }
+
+        public static byte[] KeyDerivation(int keyLengthInBytes, byte[] keyToExpand, int numberOfKeysToDerive)
+        {
+            HashAlgorithmName algorithm = HashAlgorithmName.SHA256;
+            using (var hkdf = new HKDF(HMACFactories.HMACSHA256, keyToExpand))
+            {
+                return hkdf.GetBytes(keyLengthInBytes * numberOfKeysToDerive);
+            }
+        }
         public static Dictionary<double, char> numberToCharacter = new Dictionary<double, char>()
         {
             {0, 'A'},

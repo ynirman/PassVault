@@ -60,13 +60,14 @@ namespace PassVault
 
         private void ButtonClickLogin(object sender, RoutedEventArgs e)
         {
-            UserLogin.Login();
+            //UserLogin.Login();
 
-            //string plaintext = "This fantastic message will be encrypted and decrypted using the same Algorithm.";
-            //byte[] encrypted = AES.StartAES(Encoding.ASCII.GetBytes(plaintext), Utils.AES_Type.Encrypt);
-            //byte[] decrypted = AES.StartAES(encrypted, Utils.AES_Type.Decrypt);
+            string plaintext = "This fantastic message will be encrypted and decrypted using the same Algorithm.";
+            byte[] encrypted = AES.StartAES(Encoding.ASCII.GetBytes(plaintext), Utils.AES_Type.Encrypt);
+            byte[] decrypted = AES.StartAES(encrypted, Utils.AES_Type.Decrypt);
 
-            //Debug.WriteLine("decrypted: " + Encoding.ASCII.GetString(decrypted));
+            Debug.WriteLine("encrypted: " + Encoding.ASCII.GetString(encrypted));
+            Debug.WriteLine("decrypted: " + Encoding.ASCII.GetString(decrypted));
         }
     }
 }

@@ -17,6 +17,7 @@ namespace PassVault
     {
         const int KEY_SIZE_IN_BYTES = 16;
         const int BLOCK_SIZE_IN_BYTES = 16;
+        const int NUM_MAIN_ROUNDS = 9;
         private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
         static Utils.AES_Type cipherType; // Encrypt or Decrypt
 
@@ -26,7 +27,7 @@ namespace PassVault
             // TODO get vaultKey 128bits instead of hardcoded
             byte[] vaultKey = new byte[KEY_SIZE_IN_BYTES];
             rngCsp.GetBytes(vaultKey);
-            vaultKey = Encoding.ASCII.GetBytes("abcdefghijklmnop"); 
+            vaultKey = Encoding.ASCII.GetBytes("abcdefghijklmnop");
 
             // At the first iteration, keyMatrix is our vaultKey
             byte[,] keyMatrix = ByteBlockToMatrix(vaultKey);
@@ -38,68 +39,69 @@ namespace PassVault
             // ForEach Block
             for (int i = 0; i < numberOfBlocks; i++)
             {
+                // Set plaintext block as stateMatrix
                 byte[] currentBlock = new byte[16];
                 Buffer.BlockCopy(plaintext, i * 16, currentBlock, 0, 16);
                 byte[,] stateMatrix = ByteBlockToMatrix(currentBlock);
 
-                //Encryption(stateMatrix, keyMatrix);
-                //cipherType = Utils.AES_Type.Decrypt;
-                //Decryption(stateMatrix, keyMatrix);
-                //Debug.WriteLine(stateMatrix);
-
                 if (cipherType == Utils.AES_Type.Encrypt)
-                {
                     Encryption(stateMatrix, keyMatrix);
-                }
                 else
-                {
                     Decryption(stateMatrix, keyMatrix);
-                }
 
                 // Apppend current cyphered block
                 byte[] cypheredBlock = MatrixToByteBlock(stateMatrix);
                 Buffer.BlockCopy(cypheredBlock, 0, cypheredText, i * 16, 16);
-
             }
-
             return cypheredText;
         }
 
         public static void Encryption(byte[,] stateMatrix, byte[,] keyMatrix)
         {
+            byte[] derivedRoundKeys = Utils.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
             // Initial round
             AddRoundKey(stateMatrix, keyMatrix); // with original key
             // 9 main rounds (depends on key length) of substitution and permutation
-            for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= NUM_MAIN_ROUNDS;  i++)
             {
+                byte[,] roundKey = GetCurrentRoundKey(derivedRoundKeys, i);
                 SubBytes(stateMatrix);
                 ShiftRows(stateMatrix);
                 MixColumns(stateMatrix);
-                // Expand key to  10 round keys, one key creates another key and so on
-                AddRoundKey(stateMatrix, keyMatrix);
+                AddRoundKey(stateMatrix, roundKey);
             }
             // Final round
             SubBytes(stateMatrix);
             ShiftRows(stateMatrix);
-            AddRoundKey(stateMatrix, keyMatrix);
+            AddRoundKey(stateMatrix, GetCurrentRoundKey(derivedRoundKeys, 10));
         }
 
         public static void Decryption(byte[,] stateMatrix, byte[,] keyMatrix)
         {
+            byte[] derivedRoundKeys = Utils.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
             // Initial round
-            AddRoundKey(stateMatrix, keyMatrix);
+            AddRoundKey(stateMatrix, GetCurrentRoundKey(derivedRoundKeys, 10));
             ShiftRows(stateMatrix);
             SubBytes(stateMatrix);
             // 9 main rounds (depends on key length) of substitution and permutation
-            for (int i = 1; i <= 9; i++)
+            for (int i = 1; i <= NUM_MAIN_ROUNDS; i++)
             {
-                AddRoundKey(stateMatrix, keyMatrix);
+                byte[,] roundKey = GetCurrentRoundKey(derivedRoundKeys, NUM_MAIN_ROUNDS - i + 1);
+                AddRoundKey(stateMatrix, roundKey);
                 MixColumns(stateMatrix);
                 ShiftRows(stateMatrix);
                 SubBytes(stateMatrix);
             }
             // Final round
             AddRoundKey(stateMatrix, keyMatrix);
+        }
+
+        public static byte[,] GetCurrentRoundKey(byte[] derivedKeys, int currentRound)
+        {
+            byte[] currentRoundKey = new byte[16];
+            Buffer.BlockCopy(derivedKeys, (currentRound - 1) * 16, currentRoundKey, 0, 16);
+
+            return ByteBlockToMatrix(currentRoundKey);
         }
 
         // XORing state with current key
