@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using SecurityDriven.Inferno.Mac;
+using SecurityDriven.Inferno.Extensions;
+using SecurityDriven.Inferno.Kdf;
 
 namespace PassVault
 {
@@ -10,13 +13,13 @@ namespace PassVault
     {
         const int SECRET_KEY_LENGTH = 26;
         private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
-        
+
         // Generating 26 length string of random characters for the Secret Key
-        public static SecureString GenerateSecretKey(string username)
+        public static string GenerateSecretKey(string username)
         {
             Dictionary<double, char> numberToCharacter = Utils.numberToCharacter;
             StringBuilder secretKey = new StringBuilder();
-            for(int i=0; i < SECRET_KEY_LENGTH; i++)
+            for (int i = 0; i < SECRET_KEY_LENGTH; i++)
             {
                 byte[] randomNumber = new byte[8];
                 rngCsp.GetBytes(randomNumber);
@@ -32,7 +35,10 @@ namespace PassVault
                 }
             }
 
-            return secretKey.ToString();
+            byte[] expandedSecretKey = Utils.KeyExpansion(32, Encoding.ASCII.GetBytes(secretKey.ToString()), username);
+
+            return expandedSecretKey.ToString();
         }
+
     }
 }

@@ -110,12 +110,11 @@ namespace PassVault
                 for (int j = 0; j < stateMatrix.GetLength(1); j++)
                 {
                     stateMatrix[i, j] = (byte)(stateMatrix[i, j] ^ keyMatrix[i, j]);
-                    //stateMatrix[i, j] = (byte)(stateMatrix[i, j] ^ 0x00);
                 }
             }
         }
 
-        // substitute stateMatrix bytes based on sbox
+        // Substitute stateMatrix bytes based on sbox
         public static void SubBytes(byte[,] stateMatrix)
         {
             for (int i = 0; i < stateMatrix.GetLength(0); i++)

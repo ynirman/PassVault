@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Inferno" Version="1.6.2" />
     <PackageReference Include="System.Text.Encoding" Version="4.3.0" />
   </ItemGroup>
 

@@ -1,5 +1,9 @@
-﻿using System;
+﻿using SecurityDriven.Inferno.Extensions;
+using SecurityDriven.Inferno.Kdf;
+using SecurityDriven.Inferno.Mac;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace PassVault
@@ -22,7 +26,14 @@ namespace PassVault
                 }
             }
         }
-
+        public static byte[] KeyExpansion(int expandToLength, byte[] keyToExpand, string additionalData)
+        {
+            HashAlgorithmName algorithm = HashAlgorithmName.SHA256;
+            using (var hkdf = new HKDF(HMACFactories.HMACSHA256, keyToExpand, additionalData.ToBytes()))
+            {
+                return hkdf.GetBytes(expandToLength);
+            }
+        }
         public static Dictionary<double, char> numberToCharacter = new Dictionary<double, char>()
         {
             {0, 'A'},

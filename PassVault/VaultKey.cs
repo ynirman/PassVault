@@ -11,7 +11,7 @@ namespace PassVault
         const int VAULT_KEY_BYTES = 16;
         private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
 
-        // Generating 128bit random bits with CSPRNG
+        // Generating 128 random bits with CSPRNG
         public static byte[] GenerateVaultKey()
         {
             byte[] vaultKey = new byte[VAULT_KEY_BYTES];
