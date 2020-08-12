@@ -16,7 +16,9 @@ namespace PassVault
                 if (true)
                 {
                     // First Login
-                    SecretKey.GenerateSecretKey(username);
+                    string secretKey = SecretKey.GenerateSecretKey(username);
+                    byte[] vaultKey = VaultKey.GenerateVaultKey();
+                    //StoreKey.GenKey_SaveInContainer("MyKeyContainer");
                 }
                 else
                 {
