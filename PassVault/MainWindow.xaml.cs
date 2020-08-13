@@ -61,7 +61,7 @@ namespace PassVault
 
         private void ButtonClickLogin(object sender, RoutedEventArgs e)
         {
-            //UserLogin.Login();
+            UserLogin.Login();
 
             //string plaintext = "This fantastic message will be encrypted and decrypted using the same Algorithm.";
             //byte[] encrypted = AES.StartAES(Encoding.ASCII.GetBytes(plaintext), AES.AES_Type.Encrypt);
@@ -70,9 +70,9 @@ namespace PassVault
             //Debug.WriteLine("encrypted: " + Encoding.ASCII.GetString(encrypted));
             //Debug.WriteLine("decrypted: " + Encoding.ASCII.GetString(decrypted));
 
-            string masterPassword = " a a ";
-            string salt = "1234567887654321123456788765432312321";
-            byte[] hashedPassword = PBKDF2.PerformPBKDF(Encoding.ASCII.GetBytes(masterPassword), Encoding.ASCII.GetBytes(salt));
+            //string masterPassword = " a a ";
+            //string salt = "1234567887654321123456788765432312321";
+            //byte[] hashedPassword = PBKDF2.PerformPBKDF(Encoding.ASCII.GetBytes(masterPassword), Encoding.ASCII.GetBytes(salt));
         }
 
         private void Button_Click_5(object sender, RoutedEventArgs e)
@@ -82,8 +82,6 @@ namespace PassVault
             //KeyOutput.Text = rsa.isPrime()).ToString();
             
             Debug.WriteLine(rsa.isPrime(BigInteger.Parse("6260585756555452515049484645444240393836353433323028272625242221")).ToString());
-
-
         }
     }
 }
