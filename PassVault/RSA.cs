@@ -11,24 +11,81 @@ namespace PassVault
     {
         const int KEY_SIZE_IN_BYTES = 16;
         private RNGCryptoServiceProvider rngCsp;
+        BigInteger p, q, n, phi, e, d;
 
         public RSA()
         {
             rngCsp = new RNGCryptoServiceProvider();
+
+            // Choose two distinct prime numbers p and q.
+            p = NearestPrime(GenerateLargeNumber());
+            q = NearestPrime(GenerateLargeNumber());
+
+            n = p * q;
+            phi = (p - 1) * (q - 1);
+
+            e = NearestPrime(GenerateLargeNumber(2, phi));
+            d = ExtendedEuclideanAlgorithm(phi, e);
+            if (d < 0) d = d + phi; // if we got a negative
+            Debug.WriteLine("sanity check: should be 1, the answer: " + (e * d) % phi);
+
         } 
 
-        //Generates a large number. 
+        public BigInteger getPublicKey()
+        {
+            return e;
+        }
+
+        public BigInteger getPrivateKey()
+        {
+            return d;
+        }
+
+        public BigInteger ExtendedEuclideanAlgorithm(BigInteger a, BigInteger b)
+        {
+            BigInteger y1 = 1, y2 = 0;
+            while (b > 0)
+            {
+                BigInteger div = a / b;
+                
+                BigInteger temp = y1;
+                y1 = y2 - div * y1;
+                y2 = temp;
+                
+                BigInteger r = a % b;
+                a = b;
+                b = r;
+            }
+            return y2;
+        }
+
+        public BigInteger NearestPrime(BigInteger num)
+        {
+            while(!isPrime(num))
+            {
+                num--;
+            }
+            return num;
+        }
+
+        //Generates a large number x that bottom <= x <= top. 
         public BigInteger GenerateLargeNumber(BigInteger bottom, BigInteger top)
         {
-            BigInteger largeNum, result;
-            
-            byte[] randomNumber = new byte[32];
-            rngCsp.GetBytes(randomNumber);            
-            largeNum = new BigInteger(randomNumber);
-            largeNum = BigInteger.Abs(largeNum);
+            BigInteger largeNum = GenerateLargeNumber(), result;
             result = bottom + (largeNum % (top - bottom + 1));
 
             return result;         
+        }
+
+        //Generates a large number. 
+        public BigInteger GenerateLargeNumber()
+        {
+            BigInteger largeNum;
+
+            byte[] randomNumber = new byte[32];
+            rngCsp.GetBytes(randomNumber);
+            largeNum = new BigInteger(randomNumber);
+            return BigInteger.Abs(largeNum);
         }
 
 
@@ -37,7 +94,7 @@ namespace PassVault
             if (largeNum == 2) return true;
             if ((largeNum & 1) == 0) return false; // is odd
 
-            return MillerRabin(largeNum, 20);
+            return MillerRabin(largeNum, 40);
         }
 
         public bool MillerRabin(BigInteger largeNum, int rounds)
@@ -71,10 +128,16 @@ namespace PassVault
             return false;
         }
 
-        public byte[] Encrypt(byte[] text)
+        public byte[] Encrypt(byte[] plainText)
         {
-            return null;
+            BigInteger bytesToInt = new BigInteger(plainText);
+            return BigInteger.ModPow(bytesToInt, e, n).ToByteArray();
         }
 
+        public byte[] Decrypt(byte[] cipher)
+        {
+            BigInteger bytesToInt = new BigInteger(cipher);
+            return BigInteger.ModPow(bytesToInt, d, n).ToByteArray();
+        }
     }
 }

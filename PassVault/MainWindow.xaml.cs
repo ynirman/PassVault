@@ -80,9 +80,8 @@ namespace PassVault
             RSA rsa = new RSA();
 
             //KeyOutput.Text = rsa.isPrime()).ToString();
-            
-            Debug.WriteLine(rsa.isPrime(BigInteger.Parse("6260585756555452515049484645444240393836353433323028272625242221")).ToString());
 
+            //Debug.WriteLine(rsa.NearestPrime(BigInteger.Parse("6260585756555452515049484645444240393836353433323028272625242219")).ToString());
 
         }
     }
