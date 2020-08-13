@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace PassVault
 {
@@ -68,6 +69,17 @@ namespace PassVault
 
             Debug.WriteLine("encrypted: " + Encoding.ASCII.GetString(encrypted));
             Debug.WriteLine("decrypted: " + Encoding.ASCII.GetString(decrypted));
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            RSA rsa = new RSA();
+
+            //KeyOutput.Text = rsa.isPrime()).ToString();
+            
+            Debug.WriteLine(rsa.isPrime(BigInteger.Parse("6260585756555452515049484645444240393836353433323028272625242221")).ToString());
+
+
         }
     }
 }

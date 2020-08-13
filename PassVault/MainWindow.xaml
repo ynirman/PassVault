@@ -23,6 +23,7 @@
         <TextBox x:Name="KeyOutput" HorizontalAlignment="Left" Margin="97,205,0,0" Text="TextBox" TextWrapping="Wrap" VerticalAlignment="Top" Width="616" Height="187" HorizontalScrollBarVisibility="Visible" Grid.ColumnSpan="4"/>
         <Button Content="Get the Public Key" HorizontalAlignment="Left" Margin="121,141,0,0" VerticalAlignment="Top" Click="Button_Click_4" Grid.Column="3" Height="20" Width="100"/>
         <Button Content="onLogin" HorizontalAlignment="Left" Margin="42,79,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="ButtonClickLogin" Height="20" Width="52"/>
+        <Button Content="RSA Generator" HorizontalAlignment="Left" Margin="240,77,0,0" VerticalAlignment="Top" Click="Button_Click_5"/>
 
 
     </Grid>
