@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
 using System.Diagnostics;
+using System.Numerics;
 
 namespace PassVault
 {
@@ -72,6 +73,17 @@ namespace PassVault
             string masterPassword = " a a ";
             string salt = "1234567887654321123456788765432312321";
             byte[] hashedPassword = PBKDF2.PerformPBKDF(Encoding.ASCII.GetBytes(masterPassword), Encoding.ASCII.GetBytes(salt));
+        }
+
+        private void Button_Click_5(object sender, RoutedEventArgs e)
+        {
+            RSA rsa = new RSA();
+
+            //KeyOutput.Text = rsa.isPrime()).ToString();
+            
+            Debug.WriteLine(rsa.isPrime(BigInteger.Parse("6260585756555452515049484645444240393836353433323028272625242221")).ToString());
+
+
         }
     }
 }
