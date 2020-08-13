@@ -8,10 +8,10 @@ using System.Text;
 
 namespace PassVault
 {
-    // extracting pseudo random keys and expanding\deriving
+    // Extracting pseudo random keys using HMAC for key extraction and expansion
     public static class MyHKDF
     {
-        public static byte[] KeyExpansion(int expandToLength, byte[] keyToExpand, string additionalData)
+        public static byte[] KeyExpansion(int expandToLength, byte[] keyToExpand, string additionalData = "")
         {
             HashAlgorithmName algorithm = HashAlgorithmName.SHA256;
             using (var hkdf = new HKDF(HMACFactories.HMACSHA256, keyToExpand, additionalData.ToBytes()))
