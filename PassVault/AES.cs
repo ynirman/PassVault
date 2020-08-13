@@ -9,7 +9,7 @@ using System.Diagnostics;
 ///  Confusion, Diffusion and secrecy only in the key!
 ///  Example use: 
 ///  AES.StartAES(Encoding.ASCII.GetBytes(plaintext),
-///               Utils.AES_Type.Encrypt);
+///               AES,AES_Type.Encrypt);
 /// </summary>
 namespace PassVault
 {
@@ -22,7 +22,7 @@ namespace PassVault
         private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
         static AES_Type cipherType; // Encrypt or Decrypt
 
-        public static byte[] StartAES(byte[] plaintext, AES.AES_Type type)
+        public static byte[] StartAES(byte[] plaintext, AES_Type type)
         {
             cipherType = type;
             // TODO get vaultKey 128bits instead of hardcoded
@@ -44,7 +44,7 @@ namespace PassVault
                 Buffer.BlockCopy(plaintext, i * 16, currentBlock, 0, 16);
                 byte[,] stateMatrix = ByteBlockToMatrix(currentBlock);
 
-                if (cipherType == AES.AES_Type.Encrypt)
+                if (cipherType == AES_Type.Encrypt)
                     Encryption(stateMatrix, keyMatrix);
                 else
                     Decryption(stateMatrix, keyMatrix);
@@ -123,13 +123,12 @@ namespace PassVault
                 for (int j = 0; j < stateMatrix.GetLength(1); j++)
                 {
                     // Split byte into row and column
-                    // TODO~ bitwise operations instead
                     string byteAsString = Convert.ToString(stateMatrix[i, j], 2);
                     string paddedByteAsString = byteAsString.PadLeft(8, '0');
                     int rowFromByte = Convert.ToInt32(paddedByteAsString.Substring(0, 4), 2);
                     int colFromByte = Convert.ToInt32(paddedByteAsString.Substring(4, 4), 2);
                     // Lookup in a pre defined substitution box
-                    if (cipherType == AES.AES_Type.Encrypt)
+                    if (cipherType == AES_Type.Encrypt)
                         stateMatrix[i, j] = Utils.sbox[rowFromByte, colFromByte];
                     else
                         stateMatrix[i, j] = Utils.sboxInverse[rowFromByte, colFromByte];
@@ -145,7 +144,7 @@ namespace PassVault
             {
                 byte[] temp = new byte[4];
                 // Set up shifted rows inside temp
-                if (cipherType == AES.AES_Type.Encrypt)
+                if (cipherType == AES_Type.Encrypt)
                 {
                     for (int j = 0; j < length; j++)
                     {
@@ -181,7 +180,7 @@ namespace PassVault
         {
             byte[,] temp = new byte[4, 4];
             // ForEach Column
-            if (cipherType == AES.AES_Type.Encrypt)
+            if (cipherType == AES_Type.Encrypt)
                 for (int i = 0; i < stateMatrix.GetLength(1); i++)
                 {
                     temp[0, i] = (byte)((BytesMultiplication(0x02, stateMatrix[0, i]) ^ BytesMultiplication(0x03, stateMatrix[1, i]) ^ stateMatrix[2, i] ^ stateMatrix[3, i]));
