@@ -15,7 +15,7 @@ namespace PassVault
         private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
 
         // Generating 26 length string of random characters for the Secret Key
-        public static string GenerateSecretKey(string username)
+        public static byte[] GenerateSecretKey(string username)
         {
             Dictionary<double, char> numberToCharacter = Utils.numberToCharacter;
             StringBuilder secretKey = new StringBuilder();
@@ -37,7 +37,7 @@ namespace PassVault
 
             byte[] expandedSecretKey = MyHKDF.KeyExpansion(32, Encoding.ASCII.GetBytes(secretKey.ToString()), username);
 
-            return expandedSecretKey.ToString();
+            return expandedSecretKey;
         }
 
     }
