@@ -11,36 +11,43 @@ namespace PassVault
     {
         public static void Login()
         {
+            //SecureString(?)
             string username = "Erlich";
+            string masterPassword = "hunter2";
 
             // User\password check
             if (true)
             {
-                //byte[] masterUnlockKey = DeriveMasterUnlockKey();
+                // if First Login
                 if (true)
                 {
-                    // First Login
                     byte[] salt = GenerateSalt();
+                    DataStore.SaveData(Globals.Salt, salt);
                     byte[] secretKey = SecretKey.GenerateSecretKey(username);
+                    DataStore.SaveData(Globals.SecretKey, secretKey);
                     byte[] vaultKey = VaultKey.GenerateVaultKey();
-
-                    DataStore.SaveData("salt" ,Encoding.ASCII.GetBytes("ABCXZDSA"));
-                    byte[] newsalt = DataStore.GetData("salt");
-                    // Store salt, secretKey and vaultKey
-                    
-
+                    DataStore.SaveData(Globals.VaultKey, vaultKey);
+                    // TODO: Create RSA Pair, Encrypt VaultKey. Encrypt Private Key with MUK
                     // Store RSA Pair
                 }
-                else
-                {
-                    // Not First Login
 
-                }
+                byte[] MUK = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword));
             }
             else
             {
-                // User login failed
+                // Failed Login
             }
+        }
+
+        private static byte[] DeriveMasterUnlockKey(byte[] masterPassword)
+        {
+            byte[] salt = DataStore.GetData(Globals.Salt);
+            byte[] hashedPassword = PBKDF2.PerformPBKDF(masterPassword, salt);
+
+            byte[] secretKey = DataStore.GetData(Globals.SecretKey);
+            byte[] expandedSecretKey = MyHKDF.KeyExpansion(32, secretKey);
+
+            return XOR(hashedPassword, expandedSecretKey);
         }
 
         private static byte[] GenerateSalt()
@@ -52,22 +59,15 @@ namespace PassVault
             return salt;
         }
 
-        //private static byte[] DeriveMasterUnlockKey()
-        //{
-        //    // Get pass and salt from KeyStore?
-        //    string mypass = " a a ";
-        //    string mysalt = "1234567887654321123456788765432312321";
-        //    byte[] masterPassword = Encoding.ASCII.GetBytes(mypass);
-        //    byte[] salt = Encoding.ASCII.GetBytes(mysalt); ;
+        public static byte[] XOR(byte[] a, byte[] b)
+        {
+            byte[] result = new byte[32];
+            for (int i = 0; i < a.Length; i++)
+            {
+                result[i] = (byte) (a[i] ^ b[i]);
+            }
 
-        //    byte[] hashedPassword = PBKDF2.PerformPBKDF(masterPassword, salt);
-        //    // get SecretKey from store
-        //    if(true)
-        //    {
-
-        //    }
-
-
-        //}
+            return result;
+        }
     }
 }

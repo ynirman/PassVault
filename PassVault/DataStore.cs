@@ -22,11 +22,14 @@ namespace PassVault
         {
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
-            string encryptedData = (string)registry.GetValue(key);
-            string data = Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(encryptedData), null, scope));
+            string encryptedData64 = (string)registry.GetValue(key);
+            byte[] encryptedData = Convert.FromBase64String(encryptedData64);
+
+            //string data = Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(encryptedData), null, scope));
+            byte[] decryptedData = ProtectedData.Unprotect(encryptedData, null, scope);
             registry.Close();
 
-            return Encoding.ASCII.GetBytes(data);
+            return decryptedData;
         }
     }
 }
