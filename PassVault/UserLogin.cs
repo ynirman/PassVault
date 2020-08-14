@@ -3,10 +3,12 @@ using SecurityDriven.Inferno.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
+using System.Windows.Media;
 
 namespace PassVault
 {
@@ -30,6 +32,7 @@ namespace PassVault
 
                 RSA rsa = new RSA();
                 byte[] publicKey = rsa.getPublicKey().Item1.ToByteArray(); ;
+                byte[] privateKey = rsa.getPrivateKey().Item1.ToByteArray();
                 DataStore.SaveData(Globals.RSAPublicKey, publicKey);
                 byte[] n = rsa.getPublicKey().Item2.ToByteArray();
                 DataStore.SaveData(Globals.RSANumber, n);
@@ -45,8 +48,7 @@ namespace PassVault
                 DataStore.SaveData(Globals.EncryptionVerifier, encryptedVerifier);
 
                 byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
-                byte[] privateKey = rsa.getPrivateKey().Item1.ToByteArray();
-                byte[] encryptedPRivateKey = AES.StartAES(privateKey, AES.AES_Type.Encrypt, masterUnlockKey);
+                byte[] encryptedPRivateKey = AES.StartAES(privateKey , AES.AES_Type.Encrypt, masterUnlockKey);
                 DataStore.SaveData(Globals.RSAPrivateKey, encryptedPRivateKey);
                 //DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey);
             }
@@ -54,6 +56,7 @@ namespace PassVault
 
         public static void Login(string i_username, string masterPassword)
         {
+            LoginWindow mw = (LoginWindow)Application.Current.MainWindow;
             username = i_username;
 
             byte[] encryptedVaultKey = DataStore.GetData(Globals.VaultKey);
@@ -61,9 +64,14 @@ namespace PassVault
             byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
             byte[] privateKey = AES.StartAES(encryptedPrivateKey, AES.AES_Type.Decrypt, masterUnlockKey);
 
-
             byte[] n = DataStore.GetData(Globals.RSANumber);
             RSA rsa = new RSA();
+            //if(new BigInteger(privateKey) < 0)
+            //{
+            //    mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
+            //    mw.LoginOutputTB.Text = "Wrong Credentials.";
+            //    return;
+            //}
             Tuple<BigInteger, BigInteger> rsaDecrypt = 
                 new Tuple<BigInteger, BigInteger>(new BigInteger(privateKey), new BigInteger(n));
             byte[] vaultKey = rsa.Decrypt(encryptedVaultKey, rsaDecrypt);
@@ -74,40 +82,42 @@ namespace PassVault
 
 
 
-            if(Utils.CompareBytes(decryptedVerifier, Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)))
+            if(new BigInteger(privateKey) > 0 &&
+                Utils.CompareBytes(decryptedVerifier, Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)))
             {
+                mw.LoginOutputTB.Text = "You're in!";
+                mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.Green);
                 Debug.WriteLine("Online!");
-            }
-            else
-            {
-                Debug.WriteLine("Wrong Pass");
-            }
 
-            // User\password check
-            if (true)
-            {
-                // if First Login
-                if (true)
+                VaultWindow vaultWindow = new VaultWindow(username)
                 {
-                }
+                    Title = "PassVault - " + username,
+                    ResizeMode = ResizeMode.CanMinimize,
+                    Owner = mw
+                };
 
-                //byte[] MUK = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
+                mw.Hide();
+                vaultWindow.ShowDialog();
             }
             else
             {
-                // Failed Login
+                mw.LoginOutputTB.Text = "Wrong Credentials.";
+                mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
+                Debug.WriteLine("Wrong Password");
             }
         }
 
         private static bool Validate(string username, string masterPassword)
         {
-            MainWindow mw = (MainWindow)Application.Current.MainWindow;
+            LoginWindow mw = (LoginWindow)Application.Current.MainWindow;
+            mw.RegisterOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
+
             if (DataStore.IsExists(username))
             {
                 mw.RegisterOutputTB.Text = "Error: Username already taken.";
                 return false;
             }
-            else if (masterPassword.Length == 0)
+            else if (username.Length == 0)
             {
                 mw.RegisterOutputTB.Text = "Error: Empty Username.";
                 return false;
@@ -118,6 +128,7 @@ namespace PassVault
                 return false;
 
             }
+            // Singleton?
             //BloomFilter bloomFilter = new BloomFilter((float)0.001);
             //if (bloomFilter.Find(masterPassword))
             //{
@@ -126,6 +137,7 @@ namespace PassVault
             //}
 
             mw.RegisterOutputTB.Text = "User created successfully!";
+            mw.RegisterOutputTB.Foreground = new SolidColorBrush(Colors.Green);
             return true;
         }
 
