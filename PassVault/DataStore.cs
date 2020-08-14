@@ -16,20 +16,20 @@ namespace PassVault
             registry.SetValue(key, "");
             registry.Close();
         }
-        public static void SaveData(string key, byte[] toEncrypt, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        public static void SaveData(string key, byte[] toEncrypt, string username, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
             string data = Convert.ToBase64String(ProtectedData.Protect(toEncrypt, null, scope));
-            registry.SetValue(key, data);
+            registry.SetValue(username + "-" + key, data);
             registry.Close();
         }
 
-        public static byte[] GetData(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        public static byte[] GetData(string key, string username, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
-            string encryptedData64 = (string)registry.GetValue(key);
+            string encryptedData64 = (string)registry.GetValue(username + "-" + key);
             byte[] encryptedData = Convert.FromBase64String(encryptedData64);
 
             //string data = Encoding.UTF8.GetString(ProtectedData.Unprotect(Convert.FromBase64String(encryptedData), null, scope));
@@ -41,18 +41,17 @@ namespace PassVault
 
         public static bool IsExists(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
-            bool isExists = false;
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
             try
             {
-                isExists = (bool) registry.GetValue(key);
+                if (registry.GetValue(key) != null)
+                    return true;
+                else return false;
             }
             catch
             {
                 return false;
             }
-
-            return true;
         }
     }
 }

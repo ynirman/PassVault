@@ -9,18 +9,63 @@ namespace PassVault
 {
     public static class UserLogin
     {
-        public static void Register(string username, string password)
+        public static void Register(string username, string masterPassword)
         {
-            if (Validate(username, password))
+            if (Validate(username, masterPassword))
             {
+                // User creation and all his new data
                 DataStore.SaveData(username);
+                byte[] salt = GenerateSalt();
+                DataStore.SaveData(Globals.Salt, salt, username);
+                byte[] secretKey = SecretKey.GenerateSecretKey(username);
+                DataStore.SaveData(Globals.SecretKey, secretKey, username);
+                byte[] vaultKey = VaultKey.GenerateVaultKey();
+                // TODO: Create RSA Pair, Encrypt VaultKey. Encrypt Private Key with MUK
+                DataStore.SaveData(Globals.VaultKey, vaultKey, username);
+                // TODO Store RSA Pair
+
+                byte[] encryptedVerifier = AES.StartAES(Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)
+                    , AES.AES_Type.Encrypt, username);
+                DataStore.SaveData(Globals.EncryptionVerifier, encryptedVerifier, username);
+
+                byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
+                DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey, username);
+            }
+        }
+
+        public static void Login(string username, string masterPassword)
+        {
+            byte[] vaultKey = DataStore.GetData(Globals.VaultKey, username);
+
+            byte[] encryptedVerifier = DataStore.GetData(Globals.EncryptionVerifier, username);
+            byte[] decryptedVerifier = AES.StartAES(encryptedVerifier,
+                AES.AES_Type.Decrypt, username);
+
+            if(decryptedVerifier == Encoding.ASCII.GetBytes(Globals.EncryptionVerifier))
+            {
+
+            }
+
+            // User\password check
+            if (true)
+            {
+                // if First Login
+                if (true)
+                {
+                }
+
+                byte[] MUK = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
+            }
+            else
+            {
+                // Failed Login
             }
         }
 
         private static bool Validate(string username, string password)
         {
             MainWindow mw = (MainWindow)Application.Current.MainWindow;
-            if(DataStore.IsExists(username))
+            if (DataStore.IsExists(username))
             {
                 mw.RegisterOutputTB.Text = "Error: Username already taken.";
                 return false;
@@ -40,42 +85,12 @@ namespace PassVault
             return true;
         }
 
-        public static void Login()
+        private static byte[] DeriveMasterUnlockKey(byte[] masterPassword, string username)
         {
-            //SecureString(?)
-            string username = "Erlich";
-            string masterPassword = "hunter2";
-
-            // User\password check
-            if (true)
-            {
-                // if First Login
-                if (true)
-                {
-                    byte[] salt = GenerateSalt();
-                    DataStore.SaveData(Globals.Salt, salt);
-                    byte[] secretKey = SecretKey.GenerateSecretKey(username);
-                    DataStore.SaveData(Globals.SecretKey, secretKey);
-                    byte[] vaultKey = VaultKey.GenerateVaultKey();
-                    DataStore.SaveData(Globals.VaultKey, vaultKey);
-                    // TODO: Create RSA Pair, Encrypt VaultKey. Encrypt Private Key with MUK
-                    // Store RSA Pair
-                }
-
-                byte[] MUK = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword));
-            }
-            else
-            {
-                // Failed Login
-            }
-        }
-
-        private static byte[] DeriveMasterUnlockKey(byte[] masterPassword)
-        {
-            byte[] salt = DataStore.GetData(Globals.Salt);
+            byte[] salt = DataStore.GetData(Globals.Salt, username);
             byte[] hashedPassword = PBKDF2.PerformPBKDF(masterPassword, salt);
 
-            byte[] secretKey = DataStore.GetData(Globals.SecretKey);
+            byte[] secretKey = DataStore.GetData(Globals.SecretKey, username);
             byte[] expandedSecretKey = MyHKDF.KeyExpansion(32, secretKey);
 
             return XOR(hashedPassword, expandedSecretKey);

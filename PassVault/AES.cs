@@ -21,11 +21,12 @@ namespace PassVault
         const int NUM_MAIN_ROUNDS = 9;
         static AES_Type cipherType; // Encrypt or Decrypt
 
-        public static byte[] StartAES(byte[] plaintext, AES_Type type)
+        public static byte[] StartAES(byte[] plaintext, AES_Type type, string username)
         {
             cipherType = type;
             byte[] vaultKey = new byte[KEY_SIZE_IN_BYTES];
-            vaultKey = DataStore.GetData(Globals.VaultKey);
+            vaultKey = DataStore.GetData(Globals.VaultKey, username);
+            // TODO Decrypt vault key with private key
 
             // At the first iteration, keyMatrix is our vaultKey
             byte[,] keyMatrix = ByteBlockToMatrix(vaultKey);
@@ -53,7 +54,7 @@ namespace PassVault
             return cypheredText;
         }
 
-        public static void Encryption(byte[,] stateMatrix, byte[,] keyMatrix)
+        private static void Encryption(byte[,] stateMatrix, byte[,] keyMatrix)
         {
             byte[] derivedRoundKeys = MyHKDF.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
             // Initial round
@@ -73,7 +74,7 @@ namespace PassVault
             AddRoundKey(stateMatrix, GetCurrentRoundKey(derivedRoundKeys, 10));
         }
 
-        public static void Decryption(byte[,] stateMatrix, byte[,] keyMatrix)
+        private static void Decryption(byte[,] stateMatrix, byte[,] keyMatrix)
         {
             byte[] derivedRoundKeys = MyHKDF.KeyDerivation(16, MatrixToByteBlock(keyMatrix), 10);
             // Initial round
@@ -94,7 +95,7 @@ namespace PassVault
         }
 
         // XORing state with current key
-        public static void AddRoundKey(byte[,] stateMatrix, byte[,] keyMatrix)
+        private static void AddRoundKey(byte[,] stateMatrix, byte[,] keyMatrix)
         {
             for (int i = 0; i < stateMatrix.GetLength(0); i++)
             {
@@ -104,7 +105,7 @@ namespace PassVault
                 }
             }
         }
-        public static byte[,] GetCurrentRoundKey(byte[] derivedKeys, int currentRound)
+        private static byte[,] GetCurrentRoundKey(byte[] derivedKeys, int currentRound)
         {
             byte[] currentRoundKey = new byte[16];
             Buffer.BlockCopy(derivedKeys, (currentRound - 1) * 16, currentRoundKey, 0, 16);
@@ -113,7 +114,7 @@ namespace PassVault
         }
 
         // Substitute stateMatrix bytes based on sbox
-        public static void SubBytes(byte[,] stateMatrix)
+        private static void SubBytes(byte[,] stateMatrix)
         {
             for (int i = 0; i < stateMatrix.GetLength(0); i++)
             {
@@ -134,7 +135,7 @@ namespace PassVault
         }
 
         // Cyclically shifts bytes in each row with an increasing offset 
-        public static void ShiftRows(byte[,] stateMatrix)
+        private static void ShiftRows(byte[,] stateMatrix)
         {
             int length = stateMatrix.GetLength(0);
             for (int i = 1; i < length; i++)
@@ -173,7 +174,7 @@ namespace PassVault
         }
 
         // Diffusion by column multiplication in GF field
-        public static void MixColumns(byte[,] stateMatrix)
+        private static void MixColumns(byte[,] stateMatrix)
         {
             byte[,] temp = new byte[4, 4];
             // ForEach Column
@@ -201,7 +202,7 @@ namespace PassVault
         }
 
         // Converting plaintext to an array of bytes
-        public static byte[] PlaintextToBytes(string plaintext)
+        private static byte[] PlaintextToBytes(string plaintext)
         {
             byte[] plaintextInBytes = Encoding.ASCII.GetBytes(plaintext);
             Utils.PadToBlockSize(ref plaintextInBytes, BLOCK_SIZE_IN_BYTES);
@@ -210,7 +211,7 @@ namespace PassVault
         }
 
         // Converting an array of bytes to a matrix
-        public static byte[,] ByteBlockToMatrix(byte[] block)
+        private static byte[,] ByteBlockToMatrix(byte[] block)
         {
             byte[,] matrix = new byte[4, 4];
             int keyByteCount = 0;
@@ -226,7 +227,7 @@ namespace PassVault
             return matrix;
         }
 
-        public static byte[] MatrixToByteBlock(byte[,] matrix)
+        private static byte[] MatrixToByteBlock(byte[,] matrix)
         {
             byte[] block = new byte[16];
             int keyByteCount = 0;
@@ -242,7 +243,7 @@ namespace PassVault
             return block;
         }
 
-        public static byte BytesMultiplication(byte a, byte b)
+        private static byte BytesMultiplication(byte a, byte b)
         {
             byte p = 0;
             for (int counter = 0; counter < 8; counter++)
