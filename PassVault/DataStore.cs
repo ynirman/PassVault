@@ -9,6 +9,13 @@ namespace PassVault
     // Key-Value pair stored in registry, encrypted with DPAPI
     public static class DataStore
     {
+        public static void SaveData(string key,  DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        {
+            RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
+
+            registry.SetValue(key, "");
+            registry.Close();
+        }
         public static void SaveData(string key, byte[] toEncrypt, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
@@ -30,6 +37,22 @@ namespace PassVault
             registry.Close();
 
             return decryptedData;
+        }
+
+        public static bool IsExists(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        {
+            bool isExists = false;
+            RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
+            try
+            {
+                isExists = (bool) registry.GetValue(key);
+            }
+            catch
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -3,12 +3,43 @@ using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
-
+using System.Windows;
 
 namespace PassVault
 {
     public static class UserLogin
     {
+        public static void Register(string username, string password)
+        {
+            if (Validate(username, password))
+            {
+                DataStore.SaveData(username);
+            }
+        }
+
+        private static bool Validate(string username, string password)
+        {
+            MainWindow mw = (MainWindow)Application.Current.MainWindow;
+            if(DataStore.IsExists(username))
+            {
+                mw.RegisterOutputTB.Text = "Error: Username already taken.";
+                return false;
+            }
+            else if (username.Length == 0)
+            {
+                mw.RegisterOutputTB.Text = "Error: Empty Username.";
+                return false;
+            }
+            else if (password.Length == 0)
+            {
+                mw.RegisterOutputTB.Text = "Error: Empty Password.";
+                return false;
+            }
+
+            mw.RegisterOutputTB.Text = "User created successfully!";
+            return true;
+        }
+
         public static void Login()
         {
             //SecureString(?)
@@ -64,7 +95,7 @@ namespace PassVault
             byte[] result = new byte[32];
             for (int i = 0; i < a.Length; i++)
             {
-                result[i] = (byte) (a[i] ^ b[i]);
+                result[i] = (byte)(a[i] ^ b[i]);
             }
 
             return result;
