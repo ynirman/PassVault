@@ -19,16 +19,13 @@ namespace PassVault
         const int KEY_SIZE_IN_BYTES = 16;
         const int BLOCK_SIZE_IN_BYTES = 16;
         const int NUM_MAIN_ROUNDS = 9;
-        private static RNGCryptoServiceProvider rngCsp = new RNGCryptoServiceProvider();
         static AES_Type cipherType; // Encrypt or Decrypt
 
         public static byte[] StartAES(byte[] plaintext, AES_Type type)
         {
             cipherType = type;
-            // TODO get vaultKey 128bits instead of hardcoded
             byte[] vaultKey = new byte[KEY_SIZE_IN_BYTES];
-            rngCsp.GetBytes(vaultKey);
-            vaultKey = Encoding.ASCII.GetBytes("abcdefghidsjklmnop");
+            vaultKey = DataStore.GetData(Globals.VaultKey);
 
             // At the first iteration, keyMatrix is our vaultKey
             byte[,] keyMatrix = ByteBlockToMatrix(vaultKey);
