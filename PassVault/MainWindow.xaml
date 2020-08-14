@@ -24,6 +24,7 @@
         <Button Content="Get the Public Key" HorizontalAlignment="Left" Margin="121,141,0,0" VerticalAlignment="Top" Click="Button_Click_4" Grid.Column="3" Height="20" Width="100"/>
         <Button Content="onLogin" HorizontalAlignment="Left" Margin="42,79,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="ButtonClickLogin" Height="20" Width="52"/>
         <Button Content="RSA Generator" HorizontalAlignment="Left" Margin="240,77,0,0" VerticalAlignment="Top" Click="Button_Click_5"/>
+        <Button Content="Bloom Filter" Grid.Column="1" HorizontalAlignment="Left" Margin="10,79,0,0" VerticalAlignment="Top" Click="Button_Click_6"/>
 
 
     </Grid>

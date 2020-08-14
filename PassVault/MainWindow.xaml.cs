@@ -78,10 +78,23 @@ namespace PassVault
         private void Button_Click_5(object sender, RoutedEventArgs e)
         {
             RSA rsa = new RSA();
+            byte[] encrptedText = rsa.Encrypt(new byte[] { 1, 2, 3, 4, 5, 6, 7 });
+            foreach (var i in encrptedText)
+            {
+                Debug.Write(i);
+            }
+            byte[] decryptedText = rsa.Decrypt(encrptedText);
+            foreach (var i in decryptedText)
+            {
+                Debug.Write(i);
+            }            
 
-            //KeyOutput.Text = rsa.isPrime()).ToString();
+        }
 
-            //Debug.WriteLine(rsa.NearestPrime(BigInteger.Parse("6260585756555452515049484645444240393836353433323028272625242219")).ToString());
+        private void Button_Click_6(object sender, RoutedEventArgs e)
+        {
+            BloomFilter bloomFilter = new BloomFilter((float)0.001);
+            Debug.WriteLine("The password was found: " + bloomFilter.Find("TempPass123"));
 
         }
     }
