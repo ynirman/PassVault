@@ -31,14 +31,14 @@ namespace PassVault
 
         } 
 
-        public BigInteger getPublicKey()
+        public Tuple<BigInteger, BigInteger> getPublicKey()
         {
-            return e;
+            return new Tuple<BigInteger,BigInteger>(e, n);
         }
 
-        public BigInteger getPrivateKey()
+        public Tuple<BigInteger, BigInteger> getPrivateKey()
         {
-            return d;
+            return new Tuple<BigInteger, BigInteger>(d, n);
         }
 
         public BigInteger ExtendedEuclideanAlgorithm(BigInteger a, BigInteger b)
@@ -134,10 +134,22 @@ namespace PassVault
             return BigInteger.ModPow(bytesToInt, e, n).ToByteArray();
         }
 
+        public byte[] Encrypt(byte[] plainText, Tuple<BigInteger,BigInteger> publicKey)
+        {
+            BigInteger bytesToInt = new BigInteger(plainText);
+            return BigInteger.ModPow(bytesToInt, publicKey.Item1, publicKey.Item2).ToByteArray();
+        }
+
         public byte[] Decrypt(byte[] cipher)
         {
             BigInteger bytesToInt = new BigInteger(cipher);
             return BigInteger.ModPow(bytesToInt, d, n).ToByteArray();
+        }
+
+        public byte[] Decrypt(byte[] cipher, Tuple<BigInteger, BigInteger> privateKey)
+        {
+            BigInteger bytesToInt = new BigInteger(cipher);
+            return BigInteger.ModPow(bytesToInt, privateKey.Item1, privateKey.Item2).ToByteArray();
         }
     }
 }
