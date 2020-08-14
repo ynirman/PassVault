@@ -5,6 +5,7 @@ using System.Text;
 using System.IO;
 using System.Diagnostics;
 using System.Security.Cryptography;
+using System.Threading.Tasks;
 
 namespace PassVault
 {
@@ -53,7 +54,7 @@ namespace PassVault
 
         // Returns true if a given string was found in our filter with false positive rate - fp.
         // Returns false if a string was not found(without mistakes).
-        public bool Find(string password)
+        public async Task<bool> Find(string password)
         {
             for (int i = 1; i <= k; i++)
             {
@@ -61,16 +62,24 @@ namespace PassVault
                 {
                     var hashedPass = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
                     int index = (int)(BitConverter.ToUInt32(hashedPass) % m);
-                    if (bloomFilter[index] == true)
+                    if (bloomFilter[index] == false)
                     {
-                        return true;
+                        return false;
                     }
                 }
             }
-            return false;
+            return true;
         }
 
-
+        private int CountTrue()
+        {
+            int counter = 0;
+            foreach (var i in bloomFilter)
+            {
+                if ((bool)i) counter++;
+            }
+            return counter;
+        }
 
     }
 }
