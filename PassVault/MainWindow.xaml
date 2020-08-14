@@ -27,12 +27,12 @@
         <Button Content="RSA Generator" HorizontalAlignment="Left" Margin="0,79,0,0" VerticalAlignment="Top" Click="Button_Click_5" Grid.ColumnSpan="2" Grid.Column="3"/>
         <PasswordBox x:Name="RegisterPassTB" HorizontalAlignment="Left" Margin="71,81,0,0" VerticalAlignment="Top" Width="90" RenderTransformOrigin="-0.217,0.392"/>
         <TextBlock HorizontalAlignment="Left" Margin="88,27,0,0" TextWrapping="Wrap" VerticalAlignment="Top"><Run Text="Register"/><LineBreak/><Run/></TextBlock>
-        <TextBox x:Name="RegisterUserTB" HorizontalAlignment="Left"  Margin="71,56,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="90" TextChanged="TextBox_TextChanged"/>
+        <TextBox x:Name="RegisterUserTB" HorizontalAlignment="Left"  Margin="71,56,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="90"/>
         <TextBlock HorizontalAlignment="Left" Margin="13,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Username"/>
         <TextBlock HorizontalAlignment="Left" Margin="13,82,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Password"/>
         <PasswordBox x:Name="LoginPassTB" HorizontalAlignment="Left" Margin="240,82,0,0" VerticalAlignment="Top" Width="90" RenderTransformOrigin="-0.217,0.392"/>
         <TextBlock HorizontalAlignment="Left" Margin="257,28,0,0" TextWrapping="Wrap" VerticalAlignment="Top"><Run Text="Sign in"/><LineBreak/><Run/></TextBlock>
-        <TextBox x:Name="LoginUserTB" HorizontalAlignment="Left"  Margin="240,56,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="90" TextChanged="TextBox_TextChanged"/>
+        <TextBox x:Name="LoginUserTB" HorizontalAlignment="Left"  Margin="240,56,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="90"/>
         <TextBlock HorizontalAlignment="Left" Margin="180,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Username"/>
         <TextBlock HorizontalAlignment="Left" Margin="181,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Password" Width="52"/>
         <Button Content="Sign up" HorizontalAlignment="Left" Margin="86,108,0,0" VerticalAlignment="Top" Width="60" Click="ButtonClickRegister"/>
