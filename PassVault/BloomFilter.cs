@@ -54,7 +54,7 @@ namespace PassVault
 
         // Returns true if a given string was found in our filter with false positive rate - fp.
         // Returns false if a string was not found(without mistakes).
-        public async Task<bool> Find(string password)
+        public bool Find(string password)
         {
             for (int i = 1; i <= k; i++)
             {

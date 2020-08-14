@@ -117,10 +117,10 @@ namespace PassVault
 
         }
 
-        private async void Button_Click_6(object sender, RoutedEventArgs e)
+        private void Button_Click_6(object sender, RoutedEventArgs e)
         {
             BloomFilter bloomFilter = new BloomFilter((float)0.001);
-            Debug.WriteLine("The password was found: " + await bloomFilter.Find("TempPass123"));
+            Debug.WriteLine("The password was found: " + bloomFilter.Find("TempPass123"));
 
         }
     }
