@@ -32,8 +32,8 @@ namespace PassVault
         private void ButtonClickRegister(object sender, RoutedEventArgs e)
         {
             string username = RegisterUserTB.Text.Trim();
-            string password = RegisterPassTB.Password;
-            UserLogin.Register(username, password);
+            string masterPassword = RegisterPassTB.Password;
+            UserLogin.Register(username, masterPassword);
    
         }
 
@@ -109,6 +109,7 @@ namespace PassVault
             {
                 Debug.Write(i);
             }
+            Debug.WriteLine("");
             byte[] decryptedText = rsa.Decrypt(encrptedText);
             foreach (var i in decryptedText)
             {
@@ -117,9 +118,9 @@ namespace PassVault
 
         }
 
-        private void Button_Click_6(object sender, RoutedEventArgs e)
+        private void BloomFilter(object sender, RoutedEventArgs e)
         {
-            BloomFilter bloomFilter = new BloomFilter((float)0.001);
+                BloomFilter bloomFilter = new BloomFilter((float)0.001);
             Debug.WriteLine("The password was found: " + bloomFilter.Find("TempPass123"));
 
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
@@ -9,35 +10,46 @@ namespace PassVault
 {
     public static class UserLogin
     {
-        public static void Register(string username, string masterPassword)
+        public static string username;
+        public static void Register(string i_username, string masterPassword)
         {
+            username = i_username;
+
             if (Validate(username, masterPassword))
             {
                 // User creation and all his new data
                 DataStore.SaveData(username);
                 byte[] salt = GenerateSalt();
-                DataStore.SaveData(Globals.Salt, salt, username);
+                DataStore.SaveData(Globals.Salt, salt);
+
                 byte[] secretKey = SecretKey.GenerateSecretKey(username);
-                DataStore.SaveData(Globals.SecretKey, secretKey, username);
+                DataStore.SaveData(Globals.SecretKey, secretKey);
+
+                RSA rsa = new RSA();
+                byte[] publicKey = rsa.getPublicKey().ToByteArray();
+                DataStore.SaveData(Globals.RSAPublicKey, publicKey);
+                byte[] privateKey = rsa.getPrivateKey().ToByteArray();
+                DataStore.SaveData(Globals.RSAPrivateKey, privateKey);
+
                 byte[] vaultKey = VaultKey.GenerateVaultKey();
-                // TODO: Create RSA Pair, Encrypt VaultKey. Encrypt Private Key with MUK
-                DataStore.SaveData(Globals.VaultKey, vaultKey, username);
-                // TODO Store RSA Pair
+                byte[] encryptedVaultKey = rsa.Encrypt(vaultKey);
+                DataStore.SaveData(Globals.VaultKey, encryptedVaultKey);
 
                 byte[] encryptedVerifier = AES.StartAES(Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)
-                    , AES.AES_Type.Encrypt, username);
-                DataStore.SaveData(Globals.EncryptionVerifier, encryptedVerifier, username);
+                    ,AES.AES_Type.Encrypt, username);
+                DataStore.SaveData(Globals.EncryptionVerifier, encryptedVerifier);
 
                 byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
-                DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey, username);
+                DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey);
             }
         }
 
         public static void Login(string username, string masterPassword)
         {
-            byte[] vaultKey = DataStore.GetData(Globals.VaultKey, username);
+            byte[] decryptedVaultKey = DataStore.GetData(Globals.VaultKey);
+            byte[] privateKey = DataStore.GetData(Globals.RSAPrivateKey);
 
-            byte[] encryptedVerifier = DataStore.GetData(Globals.EncryptionVerifier, username);
+            byte[] encryptedVerifier = DataStore.GetData(Globals.EncryptionVerifier);
             byte[] decryptedVerifier = AES.StartAES(encryptedVerifier,
                 AES.AES_Type.Decrypt, username);
 
@@ -62,7 +74,7 @@ namespace PassVault
             }
         }
 
-        private static bool Validate(string username, string password)
+        private static bool Validate(string username, string masterPassword)
         {
             MainWindow mw = (MainWindow)Application.Current.MainWindow;
             if (DataStore.IsExists(username))
@@ -70,16 +82,22 @@ namespace PassVault
                 mw.RegisterOutputTB.Text = "Error: Username already taken.";
                 return false;
             }
-            else if (username.Length == 0)
+            else if (masterPassword.Length == 0)
             {
                 mw.RegisterOutputTB.Text = "Error: Empty Username.";
                 return false;
             }
-            else if (password.Length == 0)
+            else if (masterPassword.Length == 0)
             {
                 mw.RegisterOutputTB.Text = "Error: Empty Password.";
                 return false;
             }
+            //BloomFilter bloomFilter = new BloomFilter((float)0.001);
+            //if(bloomFilter.Find(masterPassword))
+            //{
+            //    mw.RegisterOutputTB.Text = "Error: Password is too weak. Try again!";
+            //    return false;
+            //}
 
             mw.RegisterOutputTB.Text = "User created successfully!";
             return true;
@@ -87,10 +105,10 @@ namespace PassVault
 
         private static byte[] DeriveMasterUnlockKey(byte[] masterPassword, string username)
         {
-            byte[] salt = DataStore.GetData(Globals.Salt, username);
+            byte[] salt = DataStore.GetData(Globals.Salt);
             byte[] hashedPassword = PBKDF2.PerformPBKDF(masterPassword, salt);
 
-            byte[] secretKey = DataStore.GetData(Globals.SecretKey, username);
+            byte[] secretKey = DataStore.GetData(Globals.SecretKey);
             byte[] expandedSecretKey = MyHKDF.KeyExpansion(32, secretKey);
 
             return XOR(hashedPassword, expandedSecretKey);

@@ -9,15 +9,16 @@ namespace PassVault
     // Key-Value pair stored in registry, encrypted with DPAPI
     public static class DataStore
     {
-        public static void SaveData(string key,  DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        public static void SaveData(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
             registry.SetValue(key, "");
             registry.Close();
         }
-        public static void SaveData(string key, byte[] toEncrypt, string username, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        public static void SaveData(string key, byte[] toEncrypt, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
+            string username = UserLogin.username;
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
             string data = Convert.ToBase64String(ProtectedData.Protect(toEncrypt, null, scope));
@@ -25,8 +26,9 @@ namespace PassVault
             registry.Close();
         }
 
-        public static byte[] GetData(string key, string username, DataProtectionScope scope = DataProtectionScope.CurrentUser)
+        public static byte[] GetData(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
+            string username = UserLogin.username;
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
             string encryptedData64 = (string)registry.GetValue(username + "-" + key);

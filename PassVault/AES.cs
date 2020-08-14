@@ -25,7 +25,7 @@ namespace PassVault
         {
             cipherType = type;
             byte[] vaultKey = new byte[KEY_SIZE_IN_BYTES];
-            vaultKey = DataStore.GetData(Globals.VaultKey, username);
+            vaultKey = DataStore.GetData(Globals.VaultKey);
             // TODO Decrypt vault key with private key
 
             // At the first iteration, keyMatrix is our vaultKey

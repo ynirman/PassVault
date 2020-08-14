@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PassVault"
         mc:Ignorable="d"
-        Title="PassVault" Height="450" Width="800" ResizeMode="NoResize" Topmost="True" WindowStyle="ThreeDBorderWindow" Background="#FFC7C7C7">
+        Title="PassVault" Height="450" Width="800" ResizeMode="CanMinimize" WindowStyle="ThreeDBorderWindow" Background="#FFC7C7C7">
     <Grid Margin="0,0,57,22">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="408*"/>
@@ -15,7 +15,7 @@
             <ColumnDefinition Width="223*"/>
         </Grid.ColumnDefinitions>
         <TextBlock HorizontalAlignment="Left" Margin="8,0,0,0" Text="Cryptographically Secure Pseudo-Random Number Generator" TextWrapping="Wrap" VerticalAlignment="Top" Height="16" Width="327" Grid.ColumnSpan="4" Grid.Column="1"/>
-        <Button Content="Generate" HorizontalAlignment="Left" Margin="122,28,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="Button_Click" Height="20" Width="52" Grid.Column="4"/>
+        <Button Content="Bloom Filter" HorizontalAlignment="Left" Margin="371,64,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="BloomFilter" Height="59" Width="94" Grid.ColumnSpan="3"/>
         <TextBlock HorizontalAlignment="Left" Margin="98,64,0,0" Text="The number is:" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Column="4" Height="16" Width="78"/>
         <TextBlock x:Name="RandomNumber" HorizontalAlignment="Left" Margin="130,28,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" RenderTransformOrigin="-0.558,-0.12" Width="44" Grid.Column="4" Height="16"/>
         <Button Content="Create Key" HorizontalAlignment="Left" Margin="371,141,0,0" VerticalAlignment="Top" Click="Button_Click_1" Height="20" Width="61" Grid.ColumnSpan="2"/>
@@ -35,8 +35,8 @@
         <TextBox x:Name="LoginUserTB" HorizontalAlignment="Left"  Margin="240,56,0,0" TextWrapping="NoWrap" VerticalAlignment="Top" Width="90"/>
         <TextBlock HorizontalAlignment="Left" Margin="180,58,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Username"/>
         <TextBlock HorizontalAlignment="Left" Margin="181,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="Password" Width="52"/>
-        <Button Content="Sign up" HorizontalAlignment="Left" Margin="86,108,0,0" VerticalAlignment="Top" Width="60" Click="ButtonClickRegister"/>
-        <TextBlock x:Name="RegisterOutputTB" HorizontalAlignment="Left" Margin="91,135,0,0" TextWrapping="Wrap" VerticalAlignment="Top" x:FieldModifier="public"/>
+        <Button Content="Sign Up" HorizontalAlignment="Left" Margin="86,108,0,0" VerticalAlignment="Top" Width="60" Click="ButtonClickRegister"/>
+        <TextBlock x:Name="RegisterOutputTB" HorizontalAlignment="Left" Margin="45,135,0,0" TextWrapping="Wrap" VerticalAlignment="Top" x:FieldModifier="public"/>
         <Button Content="Bloom Filter" Grid.Column="4" HorizontalAlignment="Left" Margin="122,108,0,0" VerticalAlignment="Top" Click="Button_Click_6"/>
 
 
