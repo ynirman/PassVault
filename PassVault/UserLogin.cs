@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using SecurityDriven.Inferno.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
@@ -11,6 +13,7 @@ namespace PassVault
     public static class UserLogin
     {
         public static string username;
+        public static bool bloomFilterLoaded = false;
         public static void Register(string i_username, string masterPassword)
         {
             username = i_username;
@@ -26,36 +29,58 @@ namespace PassVault
                 DataStore.SaveData(Globals.SecretKey, secretKey);
 
                 RSA rsa = new RSA();
-                byte[] publicKey = rsa.getPublicKey().ToByteArray();
+                byte[] publicKey = rsa.getPublicKey().Item1.ToByteArray(); ;
                 DataStore.SaveData(Globals.RSAPublicKey, publicKey);
-                byte[] privateKey = rsa.getPrivateKey().ToByteArray();
-                DataStore.SaveData(Globals.RSAPrivateKey, privateKey);
+                byte[] n = rsa.getPublicKey().Item2.ToByteArray();
+                DataStore.SaveData(Globals.RSANumber, n);
 
                 byte[] vaultKey = VaultKey.GenerateVaultKey();
-                byte[] encryptedVaultKey = rsa.Encrypt(vaultKey);
+                Tuple<BigInteger, BigInteger> rsaEncrypt =
+                    new Tuple<BigInteger, BigInteger>(new BigInteger(publicKey), new BigInteger(n));
+                byte[] encryptedVaultKey = rsa.Encrypt(vaultKey, rsaEncrypt);
                 DataStore.SaveData(Globals.VaultKey, encryptedVaultKey);
 
                 byte[] encryptedVerifier = AES.StartAES(Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)
-                    ,AES.AES_Type.Encrypt, username);
+                    ,AES.AES_Type.Encrypt, vaultKey);
                 DataStore.SaveData(Globals.EncryptionVerifier, encryptedVerifier);
 
                 byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
-                DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey);
+                byte[] privateKey = rsa.getPrivateKey().Item1.ToByteArray();
+                byte[] encryptedPRivateKey = AES.StartAES(privateKey, AES.AES_Type.Encrypt, masterUnlockKey);
+                DataStore.SaveData(Globals.RSAPrivateKey, encryptedPRivateKey);
+                //DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey);
             }
         }
 
-        public static void Login(string username, string masterPassword)
+        public static void Login(string i_username, string masterPassword)
         {
-            byte[] decryptedVaultKey = DataStore.GetData(Globals.VaultKey);
-            byte[] privateKey = DataStore.GetData(Globals.RSAPrivateKey);
+            username = i_username;
+
+            byte[] encryptedVaultKey = DataStore.GetData(Globals.VaultKey);
+            byte[] encryptedPrivateKey = DataStore.GetData(Globals.RSAPrivateKey);
+            byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
+            byte[] privateKey = AES.StartAES(encryptedPrivateKey, AES.AES_Type.Decrypt, masterUnlockKey);
+
+
+            byte[] n = DataStore.GetData(Globals.RSANumber);
+            RSA rsa = new RSA();
+            Tuple<BigInteger, BigInteger> rsaDecrypt = 
+                new Tuple<BigInteger, BigInteger>(new BigInteger(privateKey), new BigInteger(n));
+            byte[] vaultKey = rsa.Decrypt(encryptedVaultKey, rsaDecrypt);
 
             byte[] encryptedVerifier = DataStore.GetData(Globals.EncryptionVerifier);
             byte[] decryptedVerifier = AES.StartAES(encryptedVerifier,
-                AES.AES_Type.Decrypt, username);
+                AES.AES_Type.Decrypt, vaultKey);
 
-            if(decryptedVerifier == Encoding.ASCII.GetBytes(Globals.EncryptionVerifier))
+
+
+            if(Utils.CompareBytes(decryptedVerifier, Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)))
             {
-
+                Debug.WriteLine("Online!");
+            }
+            else
+            {
+                Debug.WriteLine("Wrong Pass");
             }
 
             // User\password check
@@ -66,7 +91,7 @@ namespace PassVault
                 {
                 }
 
-                byte[] MUK = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
+                //byte[] MUK = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
             }
             else
             {
@@ -91,9 +116,10 @@ namespace PassVault
             {
                 mw.RegisterOutputTB.Text = "Error: Empty Password.";
                 return false;
+
             }
             //BloomFilter bloomFilter = new BloomFilter((float)0.001);
-            //if(bloomFilter.Find(masterPassword))
+            //if (bloomFilter.Find(masterPassword))
             //{
             //    mw.RegisterOutputTB.Text = "Error: Password is too weak. Try again!";
             //    return false;

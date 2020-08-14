@@ -3,6 +3,7 @@ using SecurityDriven.Inferno.Kdf;
 using SecurityDriven.Inferno.Mac;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -25,6 +26,21 @@ namespace PassVault
                     dest[i, j] = src[i, j];
                 }
             }
+        }
+
+        public static bool CompareBytes(byte[] a, byte[] b)
+        {
+            int length = Encoding.ASCII.GetBytes(Globals.EncryptionVerifier).Length;
+            if (a.Length < length && b.Length < length)
+                return false;
+
+            for(int i=0; i < length; i++)
+            {
+                if (a[i] != b[i])
+                    return false;
+            }
+
+            return true;
         }
 
         public static Dictionary<double, char> numberToCharacter = new Dictionary<double, char>()

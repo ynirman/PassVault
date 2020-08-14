@@ -13,5 +13,6 @@ namespace PassVault
         public const string RSAPublicKey = "RSAPublicKey";
         public const string RSAPrivateKey = "RSAPrivateKey";
         public const string EncryptionVerifier = "EncryptionVerifier";
+        public const string RSANumber = "RSANumber";
     }
 }

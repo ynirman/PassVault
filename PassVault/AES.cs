@@ -21,11 +21,10 @@ namespace PassVault
         const int NUM_MAIN_ROUNDS = 9;
         static AES_Type cipherType; // Encrypt or Decrypt
 
-        public static byte[] StartAES(byte[] plaintext, AES_Type type, string username)
+        public static byte[] StartAES(byte[] plaintext, AES_Type type, byte[] vaultKey)
         {
             cipherType = type;
-            byte[] vaultKey = new byte[KEY_SIZE_IN_BYTES];
-            vaultKey = DataStore.GetData(Globals.VaultKey);
+            string username = UserLogin.username;
             // TODO Decrypt vault key with private key
 
             // At the first iteration, keyMatrix is our vaultKey
