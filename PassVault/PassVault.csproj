@@ -30,6 +30,9 @@
 
   <ItemGroup>
     <None Update="top1000000">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+    <None Update="top1000000.bin">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

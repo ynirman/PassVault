@@ -14,5 +14,6 @@ namespace PassVault
         public const string RSAPrivateKey = "RSAPrivateKey";
         public const string EncryptionVerifier = "EncryptionVerifier"; // Should be some secret, that changes ragulary.
         public const string RSANumber = "RSANumber";
+        public const string SERVICES = "Services";
     }
 }

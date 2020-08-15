@@ -66,12 +66,12 @@ namespace PassVault
 
             byte[] n = DataStore.GetData(Globals.RSANumber);
             RSA rsa = new RSA();
-            //if(new BigInteger(privateKey) < 0)
-            //{
-            //    mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
-            //    mw.LoginOutputTB.Text = "Wrong Credentials.";
-            //    return;
-            //}
+            if (new BigInteger(privateKey) < 0)
+            {
+                mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
+                mw.LoginOutputTB.Text = "Wrong Credentials.";
+                return;
+            }
             Tuple<BigInteger, BigInteger> rsaDecrypt = 
                 new Tuple<BigInteger, BigInteger>(new BigInteger(privateKey), new BigInteger(n));
             byte[] vaultKey = rsa.Decrypt(encryptedVaultKey, rsaDecrypt);
@@ -89,7 +89,7 @@ namespace PassVault
                 mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.Green);
                 Debug.WriteLine("Online!");
 
-                VaultWindow vaultWindow = new VaultWindow(username)
+                VaultWindow vaultWindow = new VaultWindow(username, vaultKey)
                 {
                     Title = "PassVault - " + username,
                     ResizeMode = ResizeMode.CanMinimize,
