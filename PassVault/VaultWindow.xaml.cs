@@ -24,10 +24,9 @@ namespace PassVault
         {
             InitializeComponent();
             this.username = username;
-            GreetingsTB.Text = "Welcome to your secret vault, " + username + ".";
+            GreetingsTB.Text = "Welcome to your secret vault, " + this.username + ".";
             vault = new Vault(username, vaultKey);
             vaultGrid.ItemsSource = vault.GetVault();
-            
         }
 
         private void ButtonClickLogoff(object sender, RoutedEventArgs e)
@@ -41,13 +40,14 @@ namespace PassVault
 
         private void AddNewEntry(object sender, RoutedEventArgs e)
         {
-            if (NewService.Text == "" || NewPassword.Text == "")
+            if (NewService.Text.Trim() == "" || NewPassword.Text.Trim() == "")
             {
-                emptyFields.Text = "Please do not leave empty fields.";
+                emptyFields.Text = "Please do not leave any empty fields.";
                 return;
             }
-            vault.AddService(NewService.Text, NewPassword.Text);
+            vault.AddService(NewService.Text.Trim(), NewPassword.Text);
             vaultGrid.Items.Refresh();
+            emptyFields.Text = "Record " + NewService.Text + " was added successfully to the vault!";
             NewService.Text = "";
             NewPassword.Text = "";
         }

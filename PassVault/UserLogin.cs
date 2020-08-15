@@ -80,14 +80,10 @@ namespace PassVault
             byte[] decryptedVerifier = AES.StartAES(encryptedVerifier,
                 AES.AES_Type.Decrypt, vaultKey);
 
-
-
-            if(new BigInteger(privateKey) > 0 &&
-                Utils.CompareBytes(decryptedVerifier, Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)))
+            if(Utils.CompareBytes(decryptedVerifier, Encoding.ASCII.GetBytes(Globals.EncryptionVerifier)))
             {
                 mw.LoginOutputTB.Text = "You're in!";
                 mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.Green);
-                Debug.WriteLine("Online!");
 
                 VaultWindow vaultWindow = new VaultWindow(username, vaultKey)
                 {
@@ -103,7 +99,6 @@ namespace PassVault
             {
                 mw.LoginOutputTB.Text = "Wrong Credentials.";
                 mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
-                Debug.WriteLine("Wrong Password");
             }
         }
 
@@ -128,11 +123,19 @@ namespace PassVault
                 return false;
 
             }
-            //Singleton?
+
             BloomFilter bloomFilter = new BloomFilter((float)0.001);
             if (bloomFilter.Find(masterPassword))
             {
-                mw.RegisterOutputTB.Text = "Error: Password is too weak. Try again!";
+                string message = "Password is too weak. Try again!";
+                if (mw.RegisterOutputTB.Text != message)
+                {
+                    mw.RegisterOutputTB.Text = message;
+                }
+                else
+                {
+                    mw.RegisterOutputTB.Text = message + "..";
+                }
                 return false;
             }
 

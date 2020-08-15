@@ -9,7 +9,7 @@ namespace PassVault
     // Slow password hashing
     public static class PBKDF2
     {
-        const int HASHING_ITERATIONS = 4096;
+        const int HASHING_ITERATIONS = 100000;
         const int OUTPUT_LENGTH_IN_BYTES = 32;
 
         public static byte[] PerformPBKDF(byte[] masterPassword, byte[] salt)
