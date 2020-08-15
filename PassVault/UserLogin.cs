@@ -117,7 +117,13 @@ namespace PassVault
                 mw.RegisterOutputTB.Text = "Error: Empty Username.";
                 return false;
             }
-            else if (masterPassword.Length == 0)
+            else if (masterPassword.Length <= 7)
+            {
+                mw.RegisterOutputTB.Text = "Error: Password length is too short.";
+                return false;
+
+            }
+            else if (masterPassword.Length < 0)
             {
                 mw.RegisterOutputTB.Text = "Error: Empty Password.";
                 return false;
