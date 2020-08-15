@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -17,10 +18,16 @@ namespace PassVault
     /// </summary>
     public partial class VaultWindow : Window
     {
-        public VaultWindow(string username)
+        private string username;
+        Vault vault;
+        public VaultWindow(string username, byte[] vaultKey)
         {
             InitializeComponent();
+            this.username = username;
             GreetingsTB.Text = "Welcome to your secret vault, " + username + ".";
+            vault = new Vault(username, vaultKey);
+            vaultGrid.ItemsSource = vault.GetVault();
+            
         }
 
         private void ButtonClickLogoff(object sender, RoutedEventArgs e)
@@ -31,5 +38,19 @@ namespace PassVault
             mw.RegisterOutputTB.Text = "";
             this.Hide();
         }
+
+        private void AddNewEntry(object sender, RoutedEventArgs e)
+        {
+            if (NewService.Text == "" || NewPassword.Text == "")
+            {
+                emptyFields.Text = "Please do not leave empty fields.";
+                return;
+            }
+            vault.AddService(NewService.Text, NewPassword.Text);
+            vaultGrid.Items.Refresh();
+            NewService.Text = "";
+            NewPassword.Text = "";
+        }
+
     }
 }

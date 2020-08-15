@@ -11,9 +11,10 @@ namespace PassVault
     {
         public static void SaveData(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
+            string username = UserLogin.username;
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
 
-            registry.SetValue(key, "");
+            registry.SetValue(username + "-" + key, "");
             registry.Close();
         }
         public static void SaveData(string key, byte[] toEncrypt, DataProtectionScope scope = DataProtectionScope.CurrentUser)
@@ -43,10 +44,11 @@ namespace PassVault
 
         public static bool IsExists(string key, DataProtectionScope scope = DataProtectionScope.CurrentUser)
         {
+            string username = UserLogin.username;
             RegistryKey registry = Registry.CurrentUser.CreateSubKey(@"SOFTWARE\PassVault");
             try
             {
-                if (registry.GetValue(key) != null)
+                if (registry.GetValue(username + "-" + key) != null)
                     return true;
                 else return false;
             }
