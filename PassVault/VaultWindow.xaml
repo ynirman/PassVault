@@ -7,10 +7,10 @@
         mc:Ignorable="d"
         Title="VaultWindow" Height="450" Width="800" Background="#FFC7C7C7" WindowStyle="ThreeDBorderWindow" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,-25,0">
-        
+
         <TextBlock x:Name="GreetingsTB" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" x:FieldModifier="public" Width="426" FontWeight="Bold" Height="20"/>
         <Button Content="Log Off" HorizontalAlignment="Left" Margin="665,339,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="ButtonClickLogoff" Height="35" Width="70" FontWeight="Bold" TabIndex="6"></Button>
-        
+
         <DataGrid IsReadOnly="True" Height="282" HorizontalAlignment="Left" Margin="37,90,0,0" Name="vaultGrid" VerticalAlignment="Top" Width="407" Background="#FFE6E6E6"  >
             <!--<DataGrid.Columns>
                 <DataGridTemplateColumn Header="Delete">
@@ -22,8 +22,8 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>-->
         </DataGrid>
-        <TextBox x:Name="NewService" HorizontalAlignment="Left" Margin="470,157,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="NewPassword" HorizontalAlignment="Left" Margin="615,157,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="NewService" HorizontalAlignment="Left" Margin="470,157,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="120"/>
+        <TextBox x:Name="NewPassword" HorizontalAlignment="Left" Margin="615,157,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="120"/>
         <TextBlock HorizontalAlignment="Left" Margin="512,137,0,0" Text="Service" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <TextBlock HorizontalAlignment="Left" Margin="650,137,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top"/>
         <Button Content="Add" HorizontalAlignment="Left" Margin="544,190,0,0" VerticalAlignment="Top" Click="AddNewEntry" Height="39" Width="118" FontWeight="Bold" FontSize="22" Background="#FF9C9CAC">
@@ -34,7 +34,16 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <TextBlock x:Name="emptyFields" TextAlignment="Center" HorizontalAlignment="Left" Margin="460,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Height="17" Width="286"/>
+        <TextBlock x:Name="emptyFields" TextAlignment="Center" HorizontalAlignment="Left" Margin="458,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Height="66" Width="286" RenderTransformOrigin="0.5,0.5">
+            <TextBlock.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform/>
+                    <SkewTransform AngleX="-4.093"/>
+                    <RotateTransform/>
+                    <TranslateTransform X="-0.608"/>
+                </TransformGroup>
+            </TextBlock.RenderTransform>
+        </TextBlock>
 
     </Grid>
 </Window>

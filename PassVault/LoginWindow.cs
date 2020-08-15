@@ -41,17 +41,6 @@ namespace PassVault
             string username = LoginUserTB.Text.Trim();
             string masterPassword = LoginPassTB.Password;
             UserLogin.Login(username, masterPassword);
-
-            //string plaintext = "This fantastic message will be encrypted and decrypted using the same Algorithm.";
-            //byte[] encrypted = AES.StartAES(Encoding.ASCII.GetBytes(plaintext), AES.AES_Type.Encrypt);
-            //byte[] decrypted = AES.StartAES(encrypted, AES.AES_Type.Decrypt);
-
-            //Debug.WriteLine("encrypted: " + Encoding.ASCII.GetString(encrypted));
-            //Debug.WriteLine("decrypted: " + Encoding.ASCII.GetString(decrypted));
-
-            //string masterPassword = " a a ";
-            //string salt = "1234567887654321123456788765432312321";
-            //byte[] hashedPassword = PBKDF2.PerformPBKDF(Encoding.ASCII.GetBytes(masterPassword), Encoding.ASCII.GetBytes(salt));
         }
 
 
