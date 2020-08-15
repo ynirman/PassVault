@@ -27,8 +27,6 @@ namespace PassVault
             e = NearestPrime(GenerateLargeNumber(2, phi));
             d = ExtendedEuclideanAlgorithm(phi, e);
             if (d < 0) d = d + phi; // if we got a negative
-            Debug.WriteLine("sanity check: should be 1, the answer: " + (e * d) % phi);
-
         } 
 
         public Tuple<BigInteger, BigInteger> getPublicKey()

@@ -24,8 +24,6 @@ namespace PassVault
         public static byte[] StartAES(byte[] plaintext, AES_Type type, byte[] vaultKey)
         {
             cipherType = type;
-            string username = UserLogin.username;
-            // TODO Decrypt vault key with private key
 
             // At the first iteration, keyMatrix is our vaultKey
             byte[,] keyMatrix = ByteBlockToMatrix(vaultKey);
