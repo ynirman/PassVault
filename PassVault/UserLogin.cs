@@ -50,7 +50,6 @@ namespace PassVault
                 byte[] masterUnlockKey = DeriveMasterUnlockKey(Encoding.ASCII.GetBytes(masterPassword), username);
                 byte[] encryptedPRivateKey = AES.StartAES(privateKey , AES.AES_Type.Encrypt, masterUnlockKey);
                 DataStore.SaveData(Globals.RSAPrivateKey, encryptedPRivateKey);
-                //DataStore.SaveData(Globals.MasterUnlockKey, masterUnlockKey);
             }
         }
 
@@ -58,6 +57,11 @@ namespace PassVault
         {
             LoginWindow mw = (LoginWindow)Application.Current.MainWindow;
             username = i_username;
+            if (!DataStore.IsExists(username))
+            {
+                WrongCredentials();
+                return;
+            }
 
             byte[] encryptedVaultKey = DataStore.GetData(Globals.VaultKey);
             byte[] encryptedPrivateKey = DataStore.GetData(Globals.RSAPrivateKey);
@@ -68,10 +72,10 @@ namespace PassVault
             RSA rsa = new RSA();
             if (new BigInteger(privateKey) < 0)
             {
-                mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
-                mw.LoginOutputTB.Text = "Wrong Credentials.";
+                WrongCredentials();
                 return;
             }
+
             Tuple<BigInteger, BigInteger> rsaDecrypt = 
                 new Tuple<BigInteger, BigInteger>(new BigInteger(privateKey), new BigInteger(n));
             byte[] vaultKey = rsa.Decrypt(encryptedVaultKey, rsaDecrypt);
@@ -179,6 +183,13 @@ namespace PassVault
             }
 
             return result;
+        }
+
+        private static void WrongCredentials()
+        {
+            LoginWindow mw = (LoginWindow)Application.Current.MainWindow;
+            mw.LoginOutputTB.Foreground = new SolidColorBrush(Colors.DarkRed);
+            mw.LoginOutputTB.Text = "Wrong Credentials.";
         }
     }
 }
