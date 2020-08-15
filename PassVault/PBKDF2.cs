@@ -24,7 +24,7 @@ namespace PassVault
             for (int i = 0; i < HASHING_ITERATIONS; i++)
             {
                 calculatedHash = HMAC_SHA256(normalizedMasterPassword, calculatedHash);
-                Debug.WriteLine(i + " " + Encoding.ASCII.GetString(calculatedHash));
+                //Debug.WriteLine(i + " " + Encoding.ASCII.GetString(calculatedHash));
             }
 
             return calculatedHash;
