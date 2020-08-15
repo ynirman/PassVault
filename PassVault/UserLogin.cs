@@ -128,13 +128,13 @@ namespace PassVault
                 return false;
 
             }
-            // Singleton?
-            //BloomFilter bloomFilter = new BloomFilter((float)0.001);
-            //if (bloomFilter.Find(masterPassword))
-            //{
-            //    mw.RegisterOutputTB.Text = "Error: Password is too weak. Try again!";
-            //    return false;
-            //}
+            //Singleton?
+            BloomFilter bloomFilter = new BloomFilter((float)0.001);
+            if (bloomFilter.Find(masterPassword))
+            {
+                mw.RegisterOutputTB.Text = "Error: Password is too weak. Try again!";
+                return false;
+            }
 
             mw.RegisterOutputTB.Text = "User created successfully!";
             mw.RegisterOutputTB.Foreground = new SolidColorBrush(Colors.Green);
