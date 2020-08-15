@@ -56,7 +56,7 @@ namespace PassVault
             //bloomFilter.CopyTo(bitToByte, 0);
             //File.WriteAllBytes(pathToFile + ".bin", bitToByte);
 
-            byte[] byteToBit = File.ReadAllBytes(pathToBloomBin + ".bin");
+            byte[] byteToBit = File.ReadAllBytes(pathToBloomBin);
             this.bloomFilter = new BitArray(byteToBit);
             
             //bool a = CountTrue(newBloomFilter) == CountTrue(bloomFilter);
