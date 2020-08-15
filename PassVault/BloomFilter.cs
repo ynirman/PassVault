@@ -30,26 +30,47 @@ namespace PassVault
         // Initialize the bit array from our bad passwords file(Top 1,000,000 bad passwords by SecLists)
         private void InitFilter()
         {
-            string pathToFile = Directory.GetCurrentDirectory() + "\\top1000000";
-            using (var fileStream = File.OpenRead(pathToFile))
-            {
-                using (var streamReader = new StreamReader(fileStream))
-                {
-                    String password;
-                    while ((password = streamReader.ReadLine()) != null)
-                    {
-                        for (int i = 1; i <= k; i++)
-                        {
-                            using (HMACSHA256 hmac = new HMACSHA256(BitConverter.GetBytes(i)))
-                            {
-                                var hashedPass = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                                int index = (int)(BitConverter.ToUInt32(hashedPass) % m);
-                                bloomFilter[index] = true;                              
-                            }
-                        }
-                    }
-                }
-            }
+            string pathToBloomBin = Directory.GetCurrentDirectory() + "\\top1000000.bin";
+            //using (var fileStream = File.OpenRead(pathToFile))
+            //{
+            //    using (var streamReader = new StreamReader(fileStream))
+            //    {
+            //        String password;
+            //        while ((password = streamReader.ReadLine()) != null)
+            //        {
+            //            for (int i = 1; i <= k; i++)
+            //            {
+            //                using (HMACSHA256 hmac = new HMACSHA256(BitConverter.GetBytes(i)))
+            //                {
+            //                    var hashedPass = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            //                    int index = (int)(BitConverter.ToUInt32(hashedPass) % m);
+            //                    bloomFilter[index] = true;                              
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
+            //int bytesNumber = m / 8;
+            //if (bytesNumber % 8 != 0) bytesNumber++;
+            //byte[] bitToByte = new byte[bytesNumber];
+            //bloomFilter.CopyTo(bitToByte, 0);
+            //File.WriteAllBytes(pathToFile + ".bin", bitToByte);
+
+            byte[] byteToBit = File.ReadAllBytes(pathToBloomBin + ".bin");
+            this.bloomFilter = new BitArray(byteToBit);
+            
+            //bool a = CountTrue(newBloomFilter) == CountTrue(bloomFilter);
+            //int min = Math.Min(newBloomFilter.Count, bloomFilter.Count);
+            //for (int i = 0; i < min; i++)
+            //{
+            //    if (bloomFilter[i] != newBloomFilter[i])
+            //    {
+            //        Debug.WriteLine("BIG BUGG!!!");
+            //    }
+            //}
+
+            //Debug.WriteLine("The compare: " + a.ToString());
+            
         }
 
         // Returns true if a given string was found in our filter with false positive rate - fp.
@@ -71,10 +92,10 @@ namespace PassVault
             return true;
         }
 
-        private int CountTrue()
+        private int CountTrue(BitArray bf)
         {
             int counter = 0;
-            foreach (var i in bloomFilter)
+            foreach (var i in bf)
             {
                 if ((bool)i) counter++;
             }
