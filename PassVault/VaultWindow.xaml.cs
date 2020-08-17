@@ -52,5 +52,11 @@ namespace PassVault
             NewPassword.Text = "";
         }
 
+        protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
+        {
+            // Shutdown the application.
+            Application.Current.Shutdown();
+        }
+
     }
 }

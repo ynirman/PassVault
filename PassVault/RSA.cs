@@ -80,9 +80,10 @@ namespace PassVault
         {
             BigInteger largeNum;
 
-            byte[] randomNumber = new byte[32];
+            byte[] randomNumber = new byte[128];
             rngCsp.GetBytes(randomNumber);
             largeNum = new BigInteger(randomNumber);
+            //Debug.WriteLine(largeNum.ToString().Length);
             return BigInteger.Abs(largeNum);
         }
 
