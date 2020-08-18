@@ -7,11 +7,19 @@
         mc:Ignorable="d"
         Title="VaultWindow" Height="450" Width="800" Background="#FFC7C7C7" WindowStyle="ThreeDBorderWindow" WindowStartupLocation="CenterOwner">
     <Grid Margin="0,0,-25,0">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="55*"/>
+            <ColumnDefinition Width="28*"/>
+            <ColumnDefinition Width="26*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="640*"/>
+            <ColumnDefinition Width="71*"/>
+        </Grid.ColumnDefinitions>
 
-        <TextBlock x:Name="GreetingsTB" TextAlignment="Center" HorizontalAlignment="Center" Margin="0,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" x:FieldModifier="public" Width="426" FontWeight="Bold" Height="20"/>
-        <Button Content="Log Off" HorizontalAlignment="Left" Margin="665,339,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="ButtonClickLogoff" Height="35" Width="70" FontWeight="Bold" TabIndex="6"></Button>
+        <TextBlock x:Name="GreetingsTB" TextAlignment="Center" HorizontalAlignment="Left" Margin="86,29,0,0" TextWrapping="Wrap" VerticalAlignment="Top" x:FieldModifier="public" Width="426" FontWeight="Bold" Height="20" Grid.Column="4"/>
+        <Button Content="Log Off" HorizontalAlignment="Left" Margin="551,339,0,0" VerticalAlignment="Top" RenderTransformOrigin="-1.025,-0.647" Click="ButtonClickLogoff" Height="35" Width="70" FontWeight="Bold" TabIndex="6" Grid.Column="4"></Button>
 
-        <DataGrid IsReadOnly="True" Height="282" HorizontalAlignment="Left" Margin="37,90,0,0" Name="vaultGrid" VerticalAlignment="Top" Width="407" Background="#FFE6E6E6"  >
+        <DataGrid IsReadOnly="True" Height="282" HorizontalAlignment="Left" Margin="37,90,0,0" Name="vaultGrid" VerticalAlignment="Top" Width="407" Background="#FFE6E6E6" Grid.ColumnSpan="5"  >
             <!--<DataGrid.Columns>
                 <DataGridTemplateColumn Header="Delete">
                     <DataGridTemplateColumn.CellTemplate>
@@ -22,11 +30,11 @@
                 </DataGridTemplateColumn>
             </DataGrid.Columns>-->
         </DataGrid>
-        <TextBox x:Name="NewService" HorizontalAlignment="Left" Margin="470,157,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="120"/>
-        <TextBox x:Name="NewPassword" HorizontalAlignment="Left" Margin="615,157,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="120"/>
-        <TextBlock HorizontalAlignment="Left" Margin="512,137,0,0" Text="Service" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <TextBlock HorizontalAlignment="Left" Margin="650,137,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top"/>
-        <Button Content="Add" HorizontalAlignment="Left" Margin="544,190,0,0" VerticalAlignment="Top" Click="AddNewEntry" Height="39" Width="118" FontWeight="Bold" FontSize="22" Background="#FF9C9CAC">
+        <TextBox x:Name="NewService" HorizontalAlignment="Left" Margin="356,157,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="120" Grid.Column="4"/>
+        <TextBox x:Name="NewPassword" HorizontalAlignment="Left" Margin="501,157,0,0" Text="" TextWrapping="NoWrap" VerticalAlignment="Top" Width="120" Grid.Column="4"/>
+        <TextBlock HorizontalAlignment="Left" Margin="398,137,0,0" Text="Service" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Column="4"/>
+        <TextBlock HorizontalAlignment="Left" Margin="536,137,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" Grid.Column="4"/>
+        <Button Content="Add" HorizontalAlignment="Left" Margin="430,190,0,0" VerticalAlignment="Top" Click="AddNewEntry" Height="39" Width="118" FontWeight="Bold" FontSize="22" Background="#FF9C9CAC" Grid.Column="4">
             <Button.BorderBrush>
                 <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                     <GradientStop Color="Black"/>
@@ -34,7 +42,7 @@
                 </LinearGradientBrush>
             </Button.BorderBrush>
         </Button>
-        <TextBlock x:Name="emptyFields" TextAlignment="Center" HorizontalAlignment="Left" Margin="458,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Height="66" Width="286" RenderTransformOrigin="0.5,0.5">
+        <TextBlock x:Name="emptyFields" TextAlignment="Center" HorizontalAlignment="Left" Margin="344,252,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Height="66" Width="286" RenderTransformOrigin="0.5,0.5" Grid.Column="4">
             <TextBlock.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform/>
