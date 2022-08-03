@@ -7,6 +7,9 @@ Features:
 - Registration and login of users.
 - Multiple vaults.
 
+## Diagram Flow
+<img src="https://i.imgur.com/Zcxz00M.png">
+
 ## How to compile
 PassVault was developed using C#. 
 
